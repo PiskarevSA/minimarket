@@ -69,4 +69,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: session_id
+      name: access_token

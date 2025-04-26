@@ -52,9 +52,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      security:
-        - bearerAuth: []
-        - cookieAuth: []
 
 components:
   schemas:
@@ -76,8 +73,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          example: 123
+          type: string
+          example: 292a6b41-550f-43d5-ba34-450b0f06f3a7
         login:
           type: string
           example: johndoe
@@ -93,13 +90,3 @@ components:
           example: "Error description"
       required:
         - message
-
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: session_id

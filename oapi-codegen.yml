@@ -1,7 +1,8 @@
-package: openapi
+package: oapi
 output: internal/gen/oapi/openapi.gen.go
 
 generate:
   chi-server: true
+  strict-server: true
   models: true
   embedded-spec: false
