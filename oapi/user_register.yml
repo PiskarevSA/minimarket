@@ -2,8 +2,16 @@ openapi: 3.0.0
 info:
   title: User Registration API
   version: 1.0.0
+  description: Register user
+  contact:
+    name: Minimarket OJSC
+    email: minimarket@admin.com
+    url: https://github.com/PiskarevSA/minimarket
 servers:
   - url: https://api.example.com
+
+tags:
+  - name: User
 
 paths:
   /api/user/register:

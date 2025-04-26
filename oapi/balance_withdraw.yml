@@ -2,8 +2,17 @@ openapi: 3.0.0
 info:
   title: Balance Withdraw API
   version: 1.0.0
+  description: Request to debit points from the savings account to pay for a new order
+  contact:
+    name: Minimarket OJSC
+    email: minimarket@admin.com
+    url: https://github.com/PiskarevSA/minimarket
 servers:
   - url: https://api.example.com
+
+tags:
+  - name: User
+  - name: Balance
 
 paths:
   /api/user/balance/withdraw:

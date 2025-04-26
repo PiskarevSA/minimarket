@@ -2,8 +2,16 @@ openapi: 3.0.0
 info:
   title: User Login API
   version: 1.0.0
+  description: Authenticate user
+  contact:
+    name: Minimarket OJSC
+    email: minimarket@admin.com
+    url: https://github.com/PiskarevSA/minimarket
 servers:
   - url: https://api.example.com
+
+tags:
+  - name: User
 
 paths:
   /api/user/login:
@@ -78,3 +86,12 @@ components:
           example: 123
         login:
           type: string
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error description"
+      required:
+        - message
