@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: User Registration API
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+
+paths:
+  /api/user/register:
+    post:
+      summary: Register a new user and authenticate
+      tags:
+        - User
+      requestBody:
+        description: User credentials for registration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User successfully registered and authenticated
+          headers:
+            Set-Cookie:
+              description: Authentication cookie
+              schema:
+                type: string
+            Authorization:
+              description: Bearer token for authenticated sessions
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid request format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Login already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          example: johndoe
+        password:
+          type: string
+          format: password
+          example: S3cur3P@ssw0rd
+      required:
+        - login
+        - password
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        login:
+          type: string
+          example: johndoe
+      required:
+        - id
+        - login
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error description"
+      required:
+        - message
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_id

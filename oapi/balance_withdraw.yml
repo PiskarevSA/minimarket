@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: Balance Withdraw API
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+
+paths:
+  /api/user/balance/withdraw:
+    post:
+      summary: Withdraw loyalty points for a new order
+      tags:
+        - Balance
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        description: Order number and amount of points to withdraw
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawRequest'
+      responses:
+        '200':
+          description: Withdrawal request processed successfully
+        '401':
+          description: User is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: Insufficient points on account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid order number format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    WithdrawRequest:
+      type: object
+      properties:
+        order:
+          type: string
+          description: Order number for which points are withdrawn
+          example: "2377225624"
+        sum:
+          type: number
+          description: Amount of points to withdraw
+          example: 751
+      required:
+        - order
+        - sum
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error description"
+      required:
+        - message
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_id

@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: User Login API
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+
+paths:
+  /api/user/login:
+    post:
+      summary: Authenticate a user
+      tags:
+        - User
+      requestBody:
+        description: User credentials for login
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User successfully authenticated
+          headers:
+            Set-Cookie:
+              description: Authentication cookie
+              schema:
+                type: string
+            Authorization:
+              description: Bearer token for authenticated sessions
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid request format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid login or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          example: johndoe
+        password:
+          type: string
+          format: password
+          example: S3cur3P@ssw0rd
+      required:
+        - login
+        - password
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        login:
+          type: string

@@ -1,0 +1,17 @@
+CREATE TYPE ORDER_STATUS AS ENUM(
+    'NEW', 
+    'PROCESSING', 
+    'INVALID', 
+    'PROCESSED'
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY,
+    order_number NUMBER UNIQUE NOT NULL,
+    user_id UUID NOT NULL,
+    status ORDER_STATUS NOT NULL DEFAULT 'NEW',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
