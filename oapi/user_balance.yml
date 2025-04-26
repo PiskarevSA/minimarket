@@ -8,31 +8,32 @@ servers:
 paths:
   /api/user/balance:
     get:
-      summary: Retrieve user loyalty points balance
+      operationId: userBalance
+      description: Retrieve user loyalty points balance
       tags:
         - Balance
       security:
         - bearerAuth: []
         - cookieAuth: []
       responses:
-        '200':
+        "200":
           description: Successful retrieval of balance
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceResponse'
-        '401':
+                $ref: "#/components/schemas/BalanceResponse"
+        "401":
           description: User is not authenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:

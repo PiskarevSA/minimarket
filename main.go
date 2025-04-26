@@ -20,8 +20,8 @@ func NewHandlers() *Handlers {
 	return &Handlers{}
 }
 
-func (h *Handlers) PostApiUserRegister(rw http.ResponseWriter, req *http.Request) {
-	rw.Write([]byte("hello world!"))
+func (h *Handlers) GetApiUserBalance(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("hello world!"))
 }
 
 func main() {

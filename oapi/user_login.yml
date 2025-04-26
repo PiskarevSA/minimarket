@@ -8,7 +8,8 @@ servers:
 paths:
   /api/user/login:
     post:
-      summary: Authenticate a user
+      operationId: userLogin
+      description: Authenticate a user
       tags:
         - User
       requestBody:
@@ -17,9 +18,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
       responses:
-        '200':
+        "200":
           description: User successfully authenticated
           headers:
             Set-Cookie:
@@ -33,25 +34,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           description: Invalid request format
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '401':
+                $ref: "#/components/schemas/Error"
+        "401":
           description: Invalid login or password
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:

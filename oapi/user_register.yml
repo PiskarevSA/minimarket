@@ -8,7 +8,8 @@ servers:
 paths:
   /api/user/register:
     post:
-      summary: Register a new user and authenticate
+      operationId: userRegister
+      description: Register a new user and authenticate
       tags:
         - User
       requestBody:
@@ -17,9 +18,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterRequest'
+              $ref: "#/components/schemas/RegisterRequest"
       responses:
-        '200':
+        "200":
           description: User successfully registered and authenticated
           headers:
             Set-Cookie:
@@ -33,25 +34,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           description: Invalid request format
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '409':
+                $ref: "#/components/schemas/Error"
+        "409":
           description: Login already in use
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:

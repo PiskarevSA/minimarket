@@ -8,7 +8,8 @@ servers:
 paths:
   /api/user/balance/withdraw:
     post:
-      summary: Withdraw loyalty points for a new order
+      operationId: userBalanceWithdraw
+      description: Withdraw loyalty points for a new order
       tags:
         - Balance
       security:
@@ -20,34 +21,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WithdrawRequest'
+              $ref: "#/components/schemas/WithdrawRequest"
       responses:
-        '200':
+        "200":
           description: Withdrawal request processed successfully
-        '401':
+        "401":
           description: User is not authenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '402':
+                $ref: "#/components/schemas/Error"
+        "402":
           description: Insufficient points on account
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '422':
+                $ref: "#/components/schemas/Error"
+        "422":
           description: Invalid order number format
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:

@@ -18,40 +18,34 @@ const (
 	CookieAuthScopes = "cookieAuth.Scopes"
 )
 
+// BalanceResponse defines model for BalanceResponse.
+type BalanceResponse struct {
+	// Current Current loyalty points balance
+	Current float32 `json:"current"`
+
+	// Withdrawn Total points withdrawn during account lifetime
+	Withdrawn float32 `json:"withdrawn"`
+}
+
 // Error defines model for Error.
 type Error struct {
 	Message string `json:"message"`
 }
 
-// RegisterRequest defines model for RegisterRequest.
-type RegisterRequest struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
-// UserResponse defines model for UserResponse.
-type UserResponse struct {
-	Id    string `json:"id"`
-	Login string `json:"login"`
-}
-
-// PostApiUserRegisterJSONRequestBody defines body for PostApiUserRegister for application/json ContentType.
-type PostApiUserRegisterJSONRequestBody = RegisterRequest
-
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Register a new user and authenticate
-	// (POST /api/user/register)
-	PostApiUserRegister(w http.ResponseWriter, r *http.Request)
+	// Retrieve user loyalty points balance
+	// (GET /api/user/balance)
+	GetApiUserBalance(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// Register a new user and authenticate
-// (POST /api/user/register)
-func (_ Unimplemented) PostApiUserRegister(w http.ResponseWriter, r *http.Request) {
+// Retrieve user loyalty points balance
+// (GET /api/user/balance)
+func (_ Unimplemented) GetApiUserBalance(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -64,8 +58,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// PostApiUserRegister operation middleware
-func (siw *ServerInterfaceWrapper) PostApiUserRegister(w http.ResponseWriter, r *http.Request) {
+// GetApiUserBalance operation middleware
+func (siw *ServerInterfaceWrapper) GetApiUserBalance(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
@@ -76,7 +70,7 @@ func (siw *ServerInterfaceWrapper) PostApiUserRegister(w http.ResponseWriter, r 
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiUserRegister(w, r)
+		siw.Handler.GetApiUserBalance(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -200,60 +194,40 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/user/register", wrapper.PostApiUserRegister)
+		r.Get(options.BaseURL+"/api/user/balance", wrapper.GetApiUserBalance)
 	})
 
 	return r
 }
 
-type PostApiUserRegisterRequestObject struct {
-	Body *PostApiUserRegisterJSONRequestBody
+type GetApiUserBalanceRequestObject struct {
 }
 
-type PostApiUserRegisterResponseObject interface {
-	VisitPostApiUserRegisterResponse(w http.ResponseWriter) error
+type GetApiUserBalanceResponseObject interface {
+	VisitGetApiUserBalanceResponse(w http.ResponseWriter) error
 }
 
-type PostApiUserRegister200ResponseHeaders struct {
-	Authorization string
-	SetCookie     string
-}
+type GetApiUserBalance200JSONResponse BalanceResponse
 
-type PostApiUserRegister200JSONResponse struct {
-	Body    UserResponse
-	Headers PostApiUserRegister200ResponseHeaders
-}
-
-func (response PostApiUserRegister200JSONResponse) VisitPostApiUserRegisterResponse(w http.ResponseWriter) error {
+func (response GetApiUserBalance200JSONResponse) VisitGetApiUserBalanceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Authorization", fmt.Sprint(response.Headers.Authorization))
-	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
 	w.WriteHeader(200)
 
-	return json.NewEncoder(w).Encode(response.Body)
+	return json.NewEncoder(w).Encode(response)
 }
 
-type PostApiUserRegister400JSONResponse Error
+type GetApiUserBalance401JSONResponse Error
 
-func (response PostApiUserRegister400JSONResponse) VisitPostApiUserRegisterResponse(w http.ResponseWriter) error {
+func (response GetApiUserBalance401JSONResponse) VisitGetApiUserBalanceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
+	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostApiUserRegister409JSONResponse Error
+type GetApiUserBalance500JSONResponse Error
 
-func (response PostApiUserRegister409JSONResponse) VisitPostApiUserRegisterResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(409)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostApiUserRegister500JSONResponse Error
-
-func (response PostApiUserRegister500JSONResponse) VisitPostApiUserRegisterResponse(w http.ResponseWriter) error {
+func (response GetApiUserBalance500JSONResponse) VisitGetApiUserBalanceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -262,9 +236,9 @@ func (response PostApiUserRegister500JSONResponse) VisitPostApiUserRegisterRespo
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
-	// Register a new user and authenticate
-	// (POST /api/user/register)
-	PostApiUserRegister(ctx context.Context, request PostApiUserRegisterRequestObject) (PostApiUserRegisterResponseObject, error)
+	// Retrieve user loyalty points balance
+	// (GET /api/user/balance)
+	GetApiUserBalance(ctx context.Context, request GetApiUserBalanceRequestObject) (GetApiUserBalanceResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -296,30 +270,23 @@ type strictHandler struct {
 	options     StrictHTTPServerOptions
 }
 
-// PostApiUserRegister operation middleware
-func (sh *strictHandler) PostApiUserRegister(w http.ResponseWriter, r *http.Request) {
-	var request PostApiUserRegisterRequestObject
-
-	var body PostApiUserRegisterJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
+// GetApiUserBalance operation middleware
+func (sh *strictHandler) GetApiUserBalance(w http.ResponseWriter, r *http.Request) {
+	var request GetApiUserBalanceRequestObject
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostApiUserRegister(ctx, request.(PostApiUserRegisterRequestObject))
+		return sh.ssi.GetApiUserBalance(ctx, request.(GetApiUserBalanceRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostApiUserRegister")
+		handler = middleware(handler, "GetApiUserBalance")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostApiUserRegisterResponseObject); ok {
-		if err := validResponse.VisitPostApiUserRegisterResponse(w); err != nil {
+	} else if validResponse, ok := response.(GetApiUserBalanceResponseObject); ok {
+		if err := validResponse.VisitGetApiUserBalanceResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
