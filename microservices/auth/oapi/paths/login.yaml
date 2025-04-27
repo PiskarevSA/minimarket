@@ -1,0 +1,39 @@
+post:
+  operationId: userLogin
+  description: Authenticate a user
+  tags:
+    - User
+  requestBody:
+    description: User credentials for registration
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/Login.yaml"
+  responses:
+    "200":
+      description:  User successfully authenticated
+      headers:
+        $ref: "../components/headers/Authenticated.yaml"
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/Authenticated.yaml"
+    "400":
+      description: Invalid request format
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/Error.yaml"
+    "401":
+      description: Invalid login or wpassword
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/Error.yaml"
+    "500":
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/Error.yaml"

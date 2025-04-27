@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: string
+    example: 292a6b41-550f-43d5-ba34-450b0f06f3a7
+    x-oapi-codegen-extra-tags:
+      validate: "required"
+  login:
+    type: string
+    minLength: 5
+    maxLength: 32
+    example: johndoe
+    x-oapi-codegen-extra-tags:
+      validate: "required, min=5,max=32"
+required:
+  - id
+  - login

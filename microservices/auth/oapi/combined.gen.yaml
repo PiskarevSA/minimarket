@@ -1,0 +1,165 @@
+openapi: 3.0.0
+info:
+  title: User Authntication API
+  version: 1.0.0
+  description: Authenticate user
+  contact:
+    name: Minimarket OJSC
+    email: minimarket@admin.com
+    url: https://github.com/PiskarevSA/minimarket
+servers:
+  - url: https://api.example.com
+tags:
+  - name: User
+paths:
+  /api/user/register:
+    post:
+      operationId: userRegister
+      description: Register a new user and authenticate
+      tags:
+        - User
+      requestBody:
+        description: User credentials for registration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: User successfully registered and authenticated
+          headers:
+            Set-Cookie:
+              description: Authentication cookie
+              schema:
+                type: string
+            Authorization:
+              description: Bearer token for authenticated sessions
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authenticated'
+        '400':
+          description: Invalid request format
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Login already in use
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/user/login:
+    post:
+      operationId: userLogin
+      description: Authenticate a user
+      tags:
+        - User
+      requestBody:
+        description: User credentials for registration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: User successfully authenticated
+          headers:
+            Set-Cookie:
+              description: Authentication cookie
+              schema:
+                type: string
+            Authorization:
+              description: Bearer token for authenticated sessions
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authenticated'
+        '400':
+          description: Invalid request format
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid login or wpassword
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        login:
+          type: string
+          minLength: 5
+          maxLength: 32
+          example: johndoe
+          x-oapi-codegen-extra-tags:
+            validate: required, min=5,max=32
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 32
+          example: S3cur3P@ssw0rd
+          x-oapi-codegen-extra-tags:
+            validate: required, min=8,max=32
+      required:
+        - login
+        - password
+    Authenticated:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 292a6b41-550f-43d5-ba34-450b0f06f3a7
+          x-oapi-codegen-extra-tags:
+            validate: required
+        login:
+          type: string
+          minLength: 5
+          maxLength: 32
+          example: johndoe
+          x-oapi-codegen-extra-tags:
+            validate: required, min=5,max=32
+      required:
+        - id
+        - login
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: U1534
+          x-oapi-codegen-extra-tags:
+            validate: required
+        message:
+          type: string
+          example: Error description
+          x-oapi-codegen-extra-tags:
+            validate: required
+      required:
+        - code
+        - message

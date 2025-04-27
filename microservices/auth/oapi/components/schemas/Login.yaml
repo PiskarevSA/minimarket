@@ -1,0 +1,20 @@
+type: object
+properties:
+  login:
+    type: string
+    minLength: 5
+    maxLength: 32
+    example: johndoe
+    x-oapi-codegen-extra-tags:
+      validate: "required, min=5,max=32"
+  password:
+    type: string
+    format: password
+    minLength: 8
+    maxLength: 32
+    example: S3cur3P@ssw0rd
+    x-oapi-codegen-extra-tags:
+      validate: "required, min=8,max=32"
+required:
+  - login
+  - password
