@@ -1,0 +1,37 @@
+version: '3.0'
+
+includes:
+  oapi-codegen: 
+    taskfile: taskfiles/OapiCodegen.yaml
+    internal: true
+
+  oapi-docsgen: 
+    taskfile: taskfiles/OapiCodegen.yaml
+    internal: true
+
+vars:
+  MICROSERVICES:
+    sh: ls microservices*/
+
+tasks:
+  generate:oapi:*:
+    desc: |
+      Run the full oapi-codegen pipeline for a single microservice.
+      This task will only execute for the directory specified by the
+      argument (e.g. `task generate:oapi:auth` runs only for
+      `microservices/auth`).
+    cmds:
+      - task: oapi-codegen:run
+        vars:
+          DIR: "microservices/{{index .MATCH 0}}"
+
+  generate:oapi:all:
+    desc: |
+      Run the full oapi-codegen pipeline for every microservice.
+      This task iterates over all subdirectories under `microservices`
+      and invokes code generation for each one.
+    cmds:
+      - for: { var: MICROSERVICES, as: MICROSERVICE }
+        task: oapi-codegen:run
+        vars:
+          DIR: "microservices/{{ .MICROSERVICE }}"
