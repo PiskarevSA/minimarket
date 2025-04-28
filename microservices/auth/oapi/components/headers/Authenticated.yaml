@@ -2,7 +2,6 @@ Set-Cookie:
   description: Authentication cookie
   schema:
     type: string
-
 Authorization:
   description: Bearer token for authenticated sessions
   schema:

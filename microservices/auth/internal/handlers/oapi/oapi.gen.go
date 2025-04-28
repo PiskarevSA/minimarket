@@ -5,7 +5,7 @@ package oapi
 
 import (
 	"context"
-	"encoding/json"
+	json "github.com/bytedance/sonic"
 	"fmt"
 	"net/http"
 
@@ -245,7 +245,7 @@ func (response UserLogin200JSONResponse) VisitUserLoginResponse(w http.ResponseW
 	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
 	w.WriteHeader(200)
 
-	return json.NewEncoder(w).Encode(response.Body)
+	return json.ConfigDefault.NewEncoder(w).Encode(response.Body)
 }
 
 type UserLogin400ApplicationProblemPlusJSONResponse Error
@@ -254,7 +254,7 @@ func (response UserLogin400ApplicationProblemPlusJSONResponse) VisitUserLoginRes
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(400)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
 type UserLogin401ApplicationProblemPlusJSONResponse Error
@@ -263,7 +263,7 @@ func (response UserLogin401ApplicationProblemPlusJSONResponse) VisitUserLoginRes
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
 type UserLogin500ApplicationProblemPlusJSONResponse Error
@@ -272,7 +272,7 @@ func (response UserLogin500ApplicationProblemPlusJSONResponse) VisitUserLoginRes
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(500)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
 type UserRegisterRequestObject struct {
@@ -299,7 +299,7 @@ func (response UserRegister200JSONResponse) VisitUserRegisterResponse(w http.Res
 	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
 	w.WriteHeader(200)
 
-	return json.NewEncoder(w).Encode(response.Body)
+	return json.ConfigDefault.NewEncoder(w).Encode(response.Body)
 }
 
 type UserRegister400ApplicationProblemPlusJSONResponse Error
@@ -308,7 +308,7 @@ func (response UserRegister400ApplicationProblemPlusJSONResponse) VisitUserRegis
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(400)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
 type UserRegister409ApplicationProblemPlusJSONResponse Error
@@ -317,7 +317,7 @@ func (response UserRegister409ApplicationProblemPlusJSONResponse) VisitUserRegis
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(409)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
 type UserRegister500ApplicationProblemPlusJSONResponse Error
@@ -326,7 +326,7 @@ func (response UserRegister500ApplicationProblemPlusJSONResponse) VisitUserRegis
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(500)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
 // StrictServerInterface represents all server handlers.
@@ -373,7 +373,7 @@ func (sh *strictHandler) UserLogin(w http.ResponseWriter, r *http.Request) {
 	var request UserLoginRequestObject
 
 	var body UserLoginJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := json.ConfigDefault.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
 	}
@@ -404,7 +404,7 @@ func (sh *strictHandler) UserRegister(w http.ResponseWriter, r *http.Request) {
 	var request UserRegisterRequestObject
 
 	var body UserRegisterJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := json.ConfigDefault.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
 	}

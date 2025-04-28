@@ -1,0 +1,43 @@
+version: '3.0'
+
+tasks:
+  generate-oapi:
+    cmds:
+      - task: bundle-oapi
+      - task: create-dir
+      - task: run-codegen
+      - task: optimize-generated-code
+  
+  bundle-oapi:
+    desc: | 
+      oapi-codegen does not support multiple OpenAPI manifests. All
+      manifests must be combined into signle file before invoking 
+      oapi-codegen.
+    cmds:
+      - redocly bundle ./oapi/main.yaml -o ./oapi/combined.gen.yaml
+
+  create-dir:
+    desc: |
+      Ensure the output directory exists for generated files. oapi-
+      codegen cannot create it automatically, so it must be created 
+      before running code generation.
+    cmds:
+      - mkdir -p ./internal/handlers/oapi
+
+  run-codegen:
+    desc: |
+      Run oapi-codegen to to convert OpenAPI specifications to Go 
+      code. This command will create boilerplate server, client
+      and models.
+    cmds:
+      - oapi-codegen -config ./oapi-config.yaml ./oapi/combined.gen.yaml
+
+  optimize-generated-code:
+    desc: |
+      Optimize the generated code by replacing the standard 
+      encoding/json library with a faster alternative for improved 
+      performance.
+    cmds:
+      - sed -i 's|"encoding/json"|json "github.com/bytedance/sonic"|g' ./internal/handlers/oapi/oapi.gen.go
+      - sed -i 's|json\.NewEncoder|json.ConfigDefault.NewEncoder|g' ./internal/handlers/oapi/oapi.gen.go
+      - sed -i 's|json\.NewDecoder|json.ConfigDefault.NewDecoder|g' ./internal/handlers/oapi/oapi.gen.go
