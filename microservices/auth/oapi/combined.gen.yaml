@@ -42,23 +42,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Authenticated'
         '400':
-          description: Invalid request format
+          description: Invalid payload format
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InvalidPayloadFormat'
         '409':
           description: Login already in use
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/LoginConflict'
         '500':
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /api/user/login:
     post:
       operationId: userLogin
@@ -89,23 +89,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Authenticated'
         '400':
-          description: Invalid request format
+          description: Invalid payload format
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InvalidPayloadFormat'
         '401':
-          description: Invalid login or wpassword
+          description: Invalid login or password
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InvalidLoginOrPassword'
         '500':
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
 components:
   schemas:
     Login:
@@ -147,19 +147,59 @@ components:
       required:
         - id
         - login
-    Error:
+    InvalidPayloadFormat:
       type: object
       properties:
         code:
           type: string
-          example: U1534
-          x-oapi-codegen-extra-tags:
-            validate: required
+          enum:
+            - U1402
         message:
           type: string
-          example: Error description
-          x-oapi-codegen-extra-tags:
-            validate: required
+          enum:
+            - invalid payload format
+      required:
+        - code
+        - message
+    LoginConflict:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+            - U1956
+        message:
+          type: string
+          enum:
+            - login already in use
+      required:
+        - code
+        - message
+    InternalError:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+            - S1394
+        message:
+          type: string
+          enum:
+            - internal error
+      required:
+        - code
+        - message
+    InvalidLoginOrPassword:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+            - U1385
+        message:
+          type: string
+          enum:
+            - invalid login or password
       required:
         - code
         - message

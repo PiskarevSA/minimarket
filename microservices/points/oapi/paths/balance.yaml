@@ -1,0 +1,28 @@
+post:
+  operationId: pointsBalance
+  description: Retrieve user loyalty points balance
+  tags:
+    - Points
+  security:
+    - bearerAuth: []
+    - cookieAuth: []
+  responses:
+    "200":
+      description: Successful retrieval of balance
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/Balance.yaml"
+    "401":
+      description: User is not authenticated
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/errors/UserUnauthenticated.yaml"
+    "500":
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/errors/InternalError.yaml"
+

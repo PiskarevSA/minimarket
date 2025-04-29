@@ -15,7 +15,7 @@ import (
 type testAuthenticateSuite struct {
 	suite.Suite
 	secretKey []byte
-	ja        *JWTAuth
+	ja        *JwtAuth
 	handler   http.Handler
 	rr        *httptest.ResponseRecorder
 	req       *http.Request

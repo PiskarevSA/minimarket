@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli/v3"
 
 	authcli "github.com/PiskarevSA/minimarket/microservices/auth/cli"
+	pointscli "github.com/PiskarevSA/minimarket/microservices/points/cli"
 )
 
 func init() {
@@ -29,7 +30,8 @@ func main() {
 		Name:    "minimarket",
 		Version: "1.0.0",
 		Commands: []*cli.Command{
-			authcli.AuthCli(),
+			authcli.Cli(),
+			pointscli.Cli(),
 		},
 	}
 

@@ -1,0 +1,11 @@
+type: object
+properties:
+  code:
+    type: string
+    enum: ["U1402"]
+  message:
+    type: string
+    enum: ["invalid payload format"]
+required:
+  - code
+  - message

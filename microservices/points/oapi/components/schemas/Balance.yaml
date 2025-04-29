@@ -1,0 +1,15 @@
+type: object
+properties:
+  current:
+    type: number
+    format: float
+    description: Current loyalty points balance
+    example: 500.5
+  withdrawn:
+    type: number
+    format: float
+    description: Total points withdrawn during account lifetime
+    example: 42
+required:
+  - current
+  - withdrawn

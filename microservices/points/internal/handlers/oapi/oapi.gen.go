@@ -13,6 +13,21 @@ import (
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
+const (
+	BearerAuthScopes = "bearerAuth.Scopes"
+	CookieAuthScopes = "cookieAuth.Scopes"
+)
+
+// Defines values for InsufficientPointsCode.
+const (
+	U1688 InsufficientPointsCode = "U1688"
+)
+
+// Defines values for InsufficientPointsMessage.
+const (
+	InsufficientPointsOnAccount InsufficientPointsMessage = "insufficient points on account"
+)
+
 // Defines values for InternalErrorCode.
 const (
 	S1394 InternalErrorCode = "S1394"
@@ -23,41 +38,46 @@ const (
 	InternalErrorMessageInternalError InternalErrorMessage = "internal error"
 )
 
-// Defines values for InvalidLoginOrPasswordCode.
+// Defines values for InvalidOrderNumberCode.
 const (
-	U1385 InvalidLoginOrPasswordCode = "U1385"
+	U1062 InvalidOrderNumberCode = "U1062"
 )
 
-// Defines values for InvalidLoginOrPasswordMessage.
+// Defines values for InvalidOrderNumberMessage.
 const (
-	InvalidLoginOrPasswordMessageInvalidLoginOrPassword InvalidLoginOrPasswordMessage = "invalid login or password"
+	InvalidOrderNumberMessageInvalidOrderNumber InvalidOrderNumberMessage = "invalid order number"
 )
 
-// Defines values for InvalidPayloadFormatCode.
+// Defines values for UserUnauthenticatedCode.
 const (
-	U1402 InvalidPayloadFormatCode = "U1402"
+	U1527 UserUnauthenticatedCode = "U1527"
 )
 
-// Defines values for InvalidPayloadFormatMessage.
+// Defines values for UserUnauthenticatedMessage.
 const (
-	InvalidPayloadFormatMessageInvalidPayloadFormat InvalidPayloadFormatMessage = "invalid payload format"
+	UserIsNotAuthenticated UserUnauthenticatedMessage = "user is not authenticated"
 )
 
-// Defines values for LoginConflictCode.
-const (
-	U1956 LoginConflictCode = "U1956"
-)
+// Balance defines model for Balance.
+type Balance struct {
+	// Current Current loyalty points balance
+	Current float32 `json:"current"`
 
-// Defines values for LoginConflictMessage.
-const (
-	LoginAlreadyInUse LoginConflictMessage = "login already in use"
-)
-
-// Authenticated defines model for Authenticated.
-type Authenticated struct {
-	ID    string `json:"id" validate:"required"`
-	Login string `json:"login" validate:"required, min=5,max=32"`
+	// Withdrawn Total points withdrawn during account lifetime
+	Withdrawn float32 `json:"withdrawn"`
 }
+
+// InsufficientPoints defines model for InsufficientPoints.
+type InsufficientPoints struct {
+	Code    InsufficientPointsCode    `json:"code"`
+	Message InsufficientPointsMessage `json:"message"`
+}
+
+// InsufficientPointsCode defines model for InsufficientPoints.Code.
+type InsufficientPointsCode string
+
+// InsufficientPointsMessage defines model for InsufficientPoints.Message.
+type InsufficientPointsMessage string
 
 // InternalError defines model for InternalError.
 type InternalError struct {
@@ -71,75 +91,63 @@ type InternalErrorCode string
 // InternalErrorMessage defines model for InternalError.Message.
 type InternalErrorMessage string
 
-// InvalidLoginOrPassword defines model for InvalidLoginOrPassword.
-type InvalidLoginOrPassword struct {
-	Code    InvalidLoginOrPasswordCode    `json:"code"`
-	Message InvalidLoginOrPasswordMessage `json:"message"`
+// InvalidOrderNumber defines model for InvalidOrderNumber.
+type InvalidOrderNumber struct {
+	Code    InvalidOrderNumberCode    `json:"code"`
+	Message InvalidOrderNumberMessage `json:"message"`
 }
 
-// InvalidLoginOrPasswordCode defines model for InvalidLoginOrPassword.Code.
-type InvalidLoginOrPasswordCode string
+// InvalidOrderNumberCode defines model for InvalidOrderNumber.Code.
+type InvalidOrderNumberCode string
 
-// InvalidLoginOrPasswordMessage defines model for InvalidLoginOrPassword.Message.
-type InvalidLoginOrPasswordMessage string
+// InvalidOrderNumberMessage defines model for InvalidOrderNumber.Message.
+type InvalidOrderNumberMessage string
 
-// InvalidPayloadFormat defines model for InvalidPayloadFormat.
-type InvalidPayloadFormat struct {
-	Code    InvalidPayloadFormatCode    `json:"code"`
-	Message InvalidPayloadFormatMessage `json:"message"`
+// UserUnauthenticated defines model for UserUnauthenticated.
+type UserUnauthenticated struct {
+	Code    UserUnauthenticatedCode    `json:"code"`
+	Message UserUnauthenticatedMessage `json:"message"`
 }
 
-// InvalidPayloadFormatCode defines model for InvalidPayloadFormat.Code.
-type InvalidPayloadFormatCode string
+// UserUnauthenticatedCode defines model for UserUnauthenticated.Code.
+type UserUnauthenticatedCode string
 
-// InvalidPayloadFormatMessage defines model for InvalidPayloadFormat.Message.
-type InvalidPayloadFormatMessage string
+// UserUnauthenticatedMessage defines model for UserUnauthenticated.Message.
+type UserUnauthenticatedMessage string
 
-// Login defines model for Login.
-type Login struct {
-	Login    string `json:"login" validate:"required, min=5,max=32"`
-	Password string `json:"password" validate:"required, min=8,max=32"`
+// Withdraw defines model for Withdraw.
+type Withdraw struct {
+	// Order Order number for which points are withdrawn
+	Order string `json:"order" validate:"required"`
+
+	// Sum Amount of points to withdraw
+	Sum float32 `json:"sum" validate:"required, min=1"`
 }
 
-// LoginConflict defines model for LoginConflict.
-type LoginConflict struct {
-	Code    LoginConflictCode    `json:"code"`
-	Message LoginConflictMessage `json:"message"`
-}
-
-// LoginConflictCode defines model for LoginConflict.Code.
-type LoginConflictCode string
-
-// LoginConflictMessage defines model for LoginConflict.Message.
-type LoginConflictMessage string
-
-// UserLoginJSONRequestBody defines body for UserLogin for application/json ContentType.
-type UserLoginJSONRequestBody = Login
-
-// UserRegisterJSONRequestBody defines body for UserRegister for application/json ContentType.
-type UserRegisterJSONRequestBody = Login
+// PointsWithdrawJSONRequestBody defines body for PointsWithdraw for application/json ContentType.
+type PointsWithdrawJSONRequestBody = Withdraw
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (POST /api/user/login)
-	UserLogin(w http.ResponseWriter, r *http.Request)
+	// (POST /api/user/points)
+	PointsBalance(w http.ResponseWriter, r *http.Request)
 
-	// (POST /api/user/register)
-	UserRegister(w http.ResponseWriter, r *http.Request)
+	// (POST /api/user/points/withdraw)
+	PointsWithdraw(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// (POST /api/user/login)
-func (_ Unimplemented) UserLogin(w http.ResponseWriter, r *http.Request) {
+// (POST /api/user/points)
+func (_ Unimplemented) PointsBalance(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (POST /api/user/register)
-func (_ Unimplemented) UserRegister(w http.ResponseWriter, r *http.Request) {
+// (POST /api/user/points/withdraw)
+func (_ Unimplemented) PointsWithdraw(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -152,11 +160,19 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// UserLogin operation middleware
-func (siw *ServerInterfaceWrapper) UserLogin(w http.ResponseWriter, r *http.Request) {
+// PointsBalance operation middleware
+func (siw *ServerInterfaceWrapper) PointsBalance(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UserLogin(w, r)
+		siw.Handler.PointsBalance(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -166,11 +182,19 @@ func (siw *ServerInterfaceWrapper) UserLogin(w http.ResponseWriter, r *http.Requ
 	handler.ServeHTTP(w, r)
 }
 
-// UserRegister operation middleware
-func (siw *ServerInterfaceWrapper) UserRegister(w http.ResponseWriter, r *http.Request) {
+// PointsWithdraw operation middleware
+func (siw *ServerInterfaceWrapper) PointsWithdraw(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UserRegister(w, r)
+		siw.Handler.PointsWithdraw(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -294,117 +318,86 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/user/login", wrapper.UserLogin)
+		r.Post(options.BaseURL+"/api/user/points", wrapper.PointsBalance)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/user/register", wrapper.UserRegister)
+		r.Post(options.BaseURL+"/api/user/points/withdraw", wrapper.PointsWithdraw)
 	})
 
 	return r
 }
 
-type UserLoginRequestObject struct {
-	Body *UserLoginJSONRequestBody
+type PointsBalanceRequestObject struct {
 }
 
-type UserLoginResponseObject interface {
-	VisitUserLoginResponse(w http.ResponseWriter) error
+type PointsBalanceResponseObject interface {
+	VisitPointsBalanceResponse(w http.ResponseWriter) error
 }
 
-type UserLogin200ResponseHeaders struct {
-	Authorization string
-	SetCookie     string
-}
+type PointsBalance200ApplicationProblemPlusJSONResponse Balance
 
-type UserLogin200JSONResponse struct {
-	Body    Authenticated
-	Headers UserLogin200ResponseHeaders
-}
-
-func (response UserLogin200JSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Authorization", fmt.Sprint(response.Headers.Authorization))
-	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
-	w.WriteHeader(200)
-
-	return json.ConfigDefault.NewEncoder(w).Encode(response.Body)
-}
-
-type UserLogin400ApplicationProblemPlusJSONResponse InvalidPayloadFormat
-
-func (response UserLogin400ApplicationProblemPlusJSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
+func (response PointsBalance200ApplicationProblemPlusJSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(400)
+	w.WriteHeader(200)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserLogin401ApplicationProblemPlusJSONResponse InvalidLoginOrPassword
+type PointsBalance401ApplicationProblemPlusJSONResponse UserUnauthenticated
 
-func (response UserLogin401ApplicationProblemPlusJSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
+func (response PointsBalance401ApplicationProblemPlusJSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserLogin500ApplicationProblemPlusJSONResponse InternalError
+type PointsBalance500ApplicationProblemPlusJSONResponse InternalError
 
-func (response UserLogin500ApplicationProblemPlusJSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
+func (response PointsBalance500ApplicationProblemPlusJSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(500)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserRegisterRequestObject struct {
-	Body *UserRegisterJSONRequestBody
+type PointsWithdrawRequestObject struct {
+	Body *PointsWithdrawJSONRequestBody
 }
 
-type UserRegisterResponseObject interface {
-	VisitUserRegisterResponse(w http.ResponseWriter) error
+type PointsWithdrawResponseObject interface {
+	VisitPointsWithdrawResponse(w http.ResponseWriter) error
 }
 
-type UserRegister200ResponseHeaders struct {
-	Authorization string
-	SetCookie     string
+type PointsWithdraw200Response struct {
 }
 
-type UserRegister200JSONResponse struct {
-	Body    Authenticated
-	Headers UserRegister200ResponseHeaders
-}
-
-func (response UserRegister200JSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Authorization", fmt.Sprint(response.Headers.Authorization))
-	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
+func (response PointsWithdraw200Response) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
 	w.WriteHeader(200)
-
-	return json.ConfigDefault.NewEncoder(w).Encode(response.Body)
+	return nil
 }
 
-type UserRegister400ApplicationProblemPlusJSONResponse InvalidPayloadFormat
+type PointsWithdraw402ApplicationProblemPlusJSONResponse InsufficientPoints
 
-func (response UserRegister400ApplicationProblemPlusJSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
+func (response PointsWithdraw402ApplicationProblemPlusJSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(400)
+	w.WriteHeader(402)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserRegister409ApplicationProblemPlusJSONResponse LoginConflict
+type PointsWithdraw422ApplicationProblemPlusJSONResponse InvalidOrderNumber
 
-func (response UserRegister409ApplicationProblemPlusJSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
+func (response PointsWithdraw422ApplicationProblemPlusJSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(409)
+	w.WriteHeader(422)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserRegister500ApplicationProblemPlusJSONResponse InternalError
+type PointsWithdraw500ApplicationProblemPlusJSONResponse InternalError
 
-func (response UserRegister500ApplicationProblemPlusJSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
+func (response PointsWithdraw500ApplicationProblemPlusJSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(500)
 
@@ -414,11 +407,11 @@ func (response UserRegister500ApplicationProblemPlusJSONResponse) VisitUserRegis
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 
-	// (POST /api/user/login)
-	UserLogin(ctx context.Context, request UserLoginRequestObject) (UserLoginResponseObject, error)
+	// (POST /api/user/points)
+	PointsBalance(ctx context.Context, request PointsBalanceRequestObject) (PointsBalanceResponseObject, error)
 
-	// (POST /api/user/register)
-	UserRegister(ctx context.Context, request UserRegisterRequestObject) (UserRegisterResponseObject, error)
+	// (POST /api/user/points/withdraw)
+	PointsWithdraw(ctx context.Context, request PointsWithdrawRequestObject) (PointsWithdrawResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -450,30 +443,23 @@ type strictHandler struct {
 	options     StrictHTTPServerOptions
 }
 
-// UserLogin operation middleware
-func (sh *strictHandler) UserLogin(w http.ResponseWriter, r *http.Request) {
-	var request UserLoginRequestObject
-
-	var body UserLoginJSONRequestBody
-	if err := json.ConfigDefault.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
+// PointsBalance operation middleware
+func (sh *strictHandler) PointsBalance(w http.ResponseWriter, r *http.Request) {
+	var request PointsBalanceRequestObject
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.UserLogin(ctx, request.(UserLoginRequestObject))
+		return sh.ssi.PointsBalance(ctx, request.(PointsBalanceRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UserLogin")
+		handler = middleware(handler, "PointsBalance")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(UserLoginResponseObject); ok {
-		if err := validResponse.VisitUserLoginResponse(w); err != nil {
+	} else if validResponse, ok := response.(PointsBalanceResponseObject); ok {
+		if err := validResponse.VisitPointsBalanceResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -481,11 +467,11 @@ func (sh *strictHandler) UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// UserRegister operation middleware
-func (sh *strictHandler) UserRegister(w http.ResponseWriter, r *http.Request) {
-	var request UserRegisterRequestObject
+// PointsWithdraw operation middleware
+func (sh *strictHandler) PointsWithdraw(w http.ResponseWriter, r *http.Request) {
+	var request PointsWithdrawRequestObject
 
-	var body UserRegisterJSONRequestBody
+	var body PointsWithdrawJSONRequestBody
 	if err := json.ConfigDefault.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -493,18 +479,18 @@ func (sh *strictHandler) UserRegister(w http.ResponseWriter, r *http.Request) {
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.UserRegister(ctx, request.(UserRegisterRequestObject))
+		return sh.ssi.PointsWithdraw(ctx, request.(PointsWithdrawRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UserRegister")
+		handler = middleware(handler, "PointsWithdraw")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(UserRegisterResponseObject); ok {
-		if err := validResponse.VisitUserRegisterResponse(w); err != nil {
+	} else if validResponse, ok := response.(PointsWithdrawResponseObject); ok {
+		if err := validResponse.VisitPointsWithdrawResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

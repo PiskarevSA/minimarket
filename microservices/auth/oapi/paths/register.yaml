@@ -20,20 +20,20 @@ post:
           schema:
             $ref: "../components/schemas/Authenticated.yaml"
     "400":
-      description: Invalid request format
+      description: Invalid payload format
       content:
         application/problem+json:
           schema:
-            $ref: "../components/schemas/Error.yaml"
+            $ref: "../components/schemas/errors/InvalidPayloadFormat.yaml"
     "409":
       description: Login already in use
       content:
         application/problem+json:
           schema:
-            $ref: "../components/schemas/Error.yaml"
+            $ref: "../components/schemas/errors/LoginConflict.yaml"
     "500":
       description: Internal server error
       content:
         application/problem+json:
           schema:
-            $ref: "../components/schemas/Error.yaml"
+            $ref: "../components/schemas/errors/InternalError.yaml"

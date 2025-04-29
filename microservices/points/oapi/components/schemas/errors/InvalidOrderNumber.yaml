@@ -1,0 +1,11 @@
+type: object
+properties:
+  code:
+    type: string
+    enum: ["U1062"]
+  message:
+    type: string
+    enum: ["invalid order number"]
+required:
+  - code
+  - message

@@ -6,9 +6,9 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var authCli = &cli.Command{
-	Name:  "auth",
-	Usage: "Run 'auth' service",
+var pointsCli = &cli.Command{
+	Name:  "points",
+	Usage: "Run 'points' service",
 	Flags: flags,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
 		return nil
@@ -16,5 +16,5 @@ var authCli = &cli.Command{
 }
 
 func Cli() *cli.Command {
-	return authCli
+	return pointsCli
 }

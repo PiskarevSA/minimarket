@@ -7,11 +7,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type CtxKey string
+type JwtAuthKey string
 
 const (
-	TokenCtxKey = CtxKey("jwtTokenCtxKey")
-	ErrorCtxKey = CtxKey("jwtErrorCtxKey")
+	TokenCtxKey = JwtAuthKey("jwtTokenCtxKey")
+	ErrorCtxKey = JwtAuthKey("jwtErrorCtxKey")
 )
 
 func PassTokenToContext(ctx context.Context, token *jwt.Token, err error) context.Context {

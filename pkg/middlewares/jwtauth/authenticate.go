@@ -19,7 +19,7 @@ func parseErrorToMsg(err error) string {
 	return ErrMsgUnauthorized
 }
 
-func Authenticate(ja *JWTAuth, extractor Extractor) func(http.Handler) http.Handler {
+func Authenticate(ja *JwtAuth, extractor Extractor) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		hfn := func(rw http.ResponseWriter, req *http.Request) {
 			tokenString := extractor(req)

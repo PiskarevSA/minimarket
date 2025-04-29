@@ -8,7 +8,7 @@ import (
 
 var (
 	DefaultAlg     = jwt.SigningMethodHS256
-	DefaultParseFn = func(ctx context.Context, ja *JWTAuth) jwt.Keyfunc {
+	DefaultParseFn = func(ctx context.Context, ja *JwtAuth) jwt.Keyfunc {
 		return func(t *jwt.Token) (any, error) {
 			if t.Method.Alg() != ja.Alg.Alg() {
 				return nil, ErrInvalidAlgo

@@ -7,11 +7,11 @@ import (
 )
 
 type (
-	ParseFn     func(context.Context, *JWTAuth) jwt.Keyfunc
+	ParseFn     func(context.Context, *JwtAuth) jwt.Keyfunc
 	ValidatorFn func(context.Context, *jwt.Token) error
 )
 
-type JWTAuth struct {
+type JwtAuth struct {
 	Alg          jwt.SigningMethod
 	SignKey      any
 	VerifyKey    any
@@ -19,8 +19,8 @@ type JWTAuth struct {
 	ValidatorFns []ValidatorFn
 }
 
-func New(secretKey any, opts ...Option) *JWTAuth {
-	ja := &JWTAuth{
+func New(secretKey any, opts ...Option) *JwtAuth {
+	ja := &JwtAuth{
 		Alg:          DefaultAlg,
 		SignKey:      secretKey,
 		VerifyKey:    secretKey,

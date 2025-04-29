@@ -1,0 +1,11 @@
+type: object
+properties:
+  code:
+    type: string
+    enum: ["U1956"]
+  message:
+    type: string
+    enum: ["login already in use"]
+required:
+  - code
+  - message

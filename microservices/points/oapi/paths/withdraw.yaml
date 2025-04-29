@@ -1,0 +1,36 @@
+post:
+  operationId: pointsWithdraw
+  description: Withdraw loyalty points for a new order
+  tags:
+    - Points
+  security:
+    - bearerAuth: []
+    - cookieAuth: []
+  requestBody:
+      description: Order number and amount of points to withdraw
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/Withdraw.yaml"
+  responses:
+    "200":
+      description: Withdrawal request processed successfully
+    "402":
+      description: Insufficient points on account
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/errors/InsufficientPoints.yaml"
+    "422":
+      description: Invalid order number format
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/errors/InvalidOrderNumber.yaml"
+    "500":
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "../components/schemas/errors/InternalError.yaml"
