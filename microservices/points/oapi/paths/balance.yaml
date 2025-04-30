@@ -1,4 +1,4 @@
-post:
+get:
   operationId: pointsBalance
   description: Retrieve user loyalty points balance
   tags:
@@ -10,19 +10,19 @@ post:
     "200":
       description: Successful retrieval of balance
       content:
-        application/problem+json:
+        application/json:
           schema:
             $ref: "../components/schemas/Balance.yaml"
     "401":
-      description: User is not authenticated
+      description: User is unauthenticated
       content:
-        application/problem+json:
+        application/json:
           schema:
             $ref: "../components/schemas/errors/UserUnauthenticated.yaml"
     "500":
       description: Internal server error
       content:
-        application/problem+json:
+        application/json:
           schema:
-            $ref: "../components/schemas/errors/InternalError.yaml"
+            $ref: "../components/schemas/errors/InternalServerError.yaml"
 

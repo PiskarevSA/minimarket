@@ -4,23 +4,30 @@
 package oapi
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
+	"encoding/base64"
 	json "github.com/bytedance/sonic"
 	"fmt"
 	"net/http"
+	"net/url"
+	"path"
+	"strings"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
-// Defines values for InternalErrorCode.
+// Defines values for InternalServerErrorCode.
 const (
-	S1394 InternalErrorCode = "S1394"
+	S1394 InternalServerErrorCode = "S1394"
 )
 
-// Defines values for InternalErrorMessage.
+// Defines values for InternalServerErrorMessage.
 const (
-	InternalErrorMessageInternalError InternalErrorMessage = "internal error"
+	InternalServerError InternalServerErrorMessage = "internal server error"
 )
 
 // Defines values for InvalidLoginOrPasswordCode.
@@ -30,7 +37,7 @@ const (
 
 // Defines values for InvalidLoginOrPasswordMessage.
 const (
-	InvalidLoginOrPasswordMessageInvalidLoginOrPassword InvalidLoginOrPasswordMessage = "invalid login or password"
+	InvalidLoginOrPassword InvalidLoginOrPasswordMessage = "invalid login or password"
 )
 
 // Defines values for InvalidPayloadFormatCode.
@@ -40,7 +47,7 @@ const (
 
 // Defines values for InvalidPayloadFormatMessage.
 const (
-	InvalidPayloadFormatMessageInvalidPayloadFormat InvalidPayloadFormatMessage = "invalid payload format"
+	InvalidPayloadFormat InvalidPayloadFormatMessage = "invalid payload format"
 )
 
 // Defines values for LoginConflictCode.
@@ -59,20 +66,20 @@ type Authenticated struct {
 	Login string `json:"login" validate:"required, min=5,max=32"`
 }
 
-// InternalError defines model for InternalError.
-type InternalError struct {
-	Code    InternalErrorCode    `json:"code"`
-	Message InternalErrorMessage `json:"message"`
+// InternalServerErrorResponse defines model for InternalServerError.
+type InternalServerErrorResponse struct {
+	Code    InternalServerErrorCode    `json:"code"`
+	Message InternalServerErrorMessage `json:"message"`
 }
 
-// InternalErrorCode defines model for InternalError.Code.
-type InternalErrorCode string
+// InternalServerErrorCode defines model for InternalServerError.Code.
+type InternalServerErrorCode string
 
-// InternalErrorMessage defines model for InternalError.Message.
-type InternalErrorMessage string
+// InternalServerErrorMessage defines model for InternalServerError.Message.
+type InternalServerErrorMessage string
 
-// InvalidLoginOrPassword defines model for InvalidLoginOrPassword.
-type InvalidLoginOrPassword struct {
+// InvalidLoginOrPasswordResponse defines model for InvalidLoginOrPassword.
+type InvalidLoginOrPasswordResponse struct {
 	Code    InvalidLoginOrPasswordCode    `json:"code"`
 	Message InvalidLoginOrPasswordMessage `json:"message"`
 }
@@ -83,8 +90,8 @@ type InvalidLoginOrPasswordCode string
 // InvalidLoginOrPasswordMessage defines model for InvalidLoginOrPassword.Message.
 type InvalidLoginOrPasswordMessage string
 
-// InvalidPayloadFormat defines model for InvalidPayloadFormat.
-type InvalidPayloadFormat struct {
+// InvalidPayloadFormatResponse defines model for InvalidPayloadFormat.
+type InvalidPayloadFormatResponse struct {
 	Code    InvalidPayloadFormatCode    `json:"code"`
 	Message InvalidPayloadFormatMessage `json:"message"`
 }
@@ -101,8 +108,8 @@ type Login struct {
 	Password string `json:"password" validate:"required, min=8,max=32"`
 }
 
-// LoginConflict defines model for LoginConflict.
-type LoginConflict struct {
+// LoginConflictResponse defines model for LoginConflict.
+type LoginConflictResponse struct {
 	Code    LoginConflictCode    `json:"code"`
 	Message LoginConflictMessage `json:"message"`
 }
@@ -330,28 +337,28 @@ func (response UserLogin200JSONResponse) VisitUserLoginResponse(w http.ResponseW
 	return json.ConfigDefault.NewEncoder(w).Encode(response.Body)
 }
 
-type UserLogin400ApplicationProblemPlusJSONResponse InvalidPayloadFormat
+type UserLogin400JSONResponse InvalidPayloadFormatResponse
 
-func (response UserLogin400ApplicationProblemPlusJSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response UserLogin400JSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserLogin401ApplicationProblemPlusJSONResponse InvalidLoginOrPassword
+type UserLogin401JSONResponse InvalidLoginOrPasswordResponse
 
-func (response UserLogin401ApplicationProblemPlusJSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response UserLogin401JSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserLogin500ApplicationProblemPlusJSONResponse InternalError
+type UserLogin500JSONResponse InternalServerErrorResponse
 
-func (response UserLogin500ApplicationProblemPlusJSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response UserLogin500JSONResponse) VisitUserLoginResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
@@ -384,28 +391,28 @@ func (response UserRegister200JSONResponse) VisitUserRegisterResponse(w http.Res
 	return json.ConfigDefault.NewEncoder(w).Encode(response.Body)
 }
 
-type UserRegister400ApplicationProblemPlusJSONResponse InvalidPayloadFormat
+type UserRegister400JSONResponse InvalidPayloadFormatResponse
 
-func (response UserRegister400ApplicationProblemPlusJSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response UserRegister400JSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserRegister409ApplicationProblemPlusJSONResponse LoginConflict
+type UserRegister409JSONResponse LoginConflictResponse
 
-func (response UserRegister409ApplicationProblemPlusJSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response UserRegister409JSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type UserRegister500ApplicationProblemPlusJSONResponse InternalError
+type UserRegister500JSONResponse InternalServerErrorResponse
 
-func (response UserRegister500ApplicationProblemPlusJSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response UserRegister500JSONResponse) VisitUserRegisterResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
@@ -510,4 +517,97 @@ func (sh *strictHandler) UserRegister(w http.ResponseWriter, r *http.Request) {
 	} else if response != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
 	}
+}
+
+// Base64 encoded, gzipped, json marshaled Swagger object
+var swaggerSpec = []string{
+
+	"H4sIAAAAAAAC/+xWTW/bOBP+K8S871GKZMtOEwEFmga7QBZe1KjRU5HDWBrLTCSSS1KJvYH++4KUv1Qr",
+	"3hTrAj30ZlPDmed55oPzApmslBQkrIH0BUy2pAr9z5vaLklYnqGl3B0oLRVpy8l/5v6MVlipkiCF4fUQ",
+	"L+ejQTgex4twlOTjcI7JKByN43m8iC8XCb6DAOxaOWtjNRcFBLAKJSoeZjKngkRIK6sxtFj4GE9Y8hyt",
+	"u6Dpr5pryqFpAihlwUU3/INcilwSBFDhakKisEtIk2EAFRfbv+P/Hj5gFRfvx0GFq/fJEBqHZgct/epU",
+	"2cK730WT8wfKLDQB3AlLWmA5I/1E+jetpT5W1oHx5ERdOZ+zQXI9OnC3Ad8EUJExWHSM+SYCMz4EIx/j",
+	"+PI3uH3MvcMj7E6pQoYCK3fYQ+MzGSWFoZalV27iZPikp2jMs9T5vxP9Mkiuxm8n6oMwLzaTmqltnLOT",
+	"7WPTw3eK61Ji/rvUFdq3sB3Fw+9lq9oYbNEG+TFUO0QOiU62fddl9hO1YwDqoNz2eGZJVutk+sGY51i7",
+	"Ht0ImO7tT0G9OhfUq1cnRyviAf6++eETcCvFouTZm0rsenz51hJrGwlLTZivGResNnTuAuvg31eWc8rF",
+	"QrYchMWWHFXIS0hdIniF+pHsB8wrLi4yWUEAG59/7r6yT3/MbiGAWrtbS2uVSaOo4HZZz92daMrNI2p6",
+	"mt1Ee59OjpxMprmyXApIOy+fU0G7d4tbX0hfDGnmDNrvXAp2M72DAJ5Im/b64CK+iJ1XqUig4pBC4o9c",
+	"cu3SZypCxSPnOto1j5LGsz6BBbdoXNJ98Lt8g2myKR+XGzL2o8zXWzVJeL+oVLmBHD0YKfbPvfv1f00L",
+	"SOF/0X4fiDbLQNT69lnqgvNiZJpyhxBL48YS01RwY1t4cFgsVtfkq6dNu9dhGMdng9ldWF6Da+osI2MW",
+	"dVmuGXauBLAkzEnv1h+p+d8tj6O8fCTUpJmVjyQ87Y4rZsi4ajAQHIA/7qQZ2fBWykdOJzPvqixrzU75",
+	"cx5HZxS0913r0fWu/3HyaAbnRvPtVnECz/Fq0AQwPqtAx+tcL56+nczZte/FV1+ZcO9O9oOh7SPSr8+G",
+	"zxsLhkzQs58NDEXeKcXeYbG9+GtefOe82OaE8iOhf42PHzE+rs9blLvVqQfGpG//+dkHRhNAa+NOX44Y",
+	"ZXsfrsgsGctFwVStlXQddbgrpVE0GL5zi8rFIL0aXQ6gud8FfNluWz5wc9/8EwAA//9KpqShORAAAA==",
+}
+
+// GetSwagger returns the content of the embedded swagger specification file
+// or error if failed to decode
+func decodeSpec() ([]byte, error) {
+	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
+	if err != nil {
+		return nil, fmt.Errorf("error base64 decoding spec: %w", err)
+	}
+	zr, err := gzip.NewReader(bytes.NewReader(zipped))
+	if err != nil {
+		return nil, fmt.Errorf("error decompressing spec: %w", err)
+	}
+	var buf bytes.Buffer
+	_, err = buf.ReadFrom(zr)
+	if err != nil {
+		return nil, fmt.Errorf("error decompressing spec: %w", err)
+	}
+
+	return buf.Bytes(), nil
+}
+
+var rawSpec = decodeSpecCached()
+
+// a naive cached of a decoded swagger spec
+func decodeSpecCached() func() ([]byte, error) {
+	data, err := decodeSpec()
+	return func() ([]byte, error) {
+		return data, err
+	}
+}
+
+// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
+func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
+	res := make(map[string]func() ([]byte, error))
+	if len(pathToFile) > 0 {
+		res[pathToFile] = rawSpec
+	}
+
+	return res
+}
+
+// GetSwagger returns the Swagger specification corresponding to the generated code
+// in this file. The external references of Swagger specification are resolved.
+// The logic of resolving external references is tightly connected to "import-mapping" feature.
+// Externally referenced files must be embedded in the corresponding golang packages.
+// Urls can be supported but this task was out of the scope.
+func GetSwagger() (swagger *openapi3.T, err error) {
+	resolvePath := PathToRawSpec("")
+
+	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
+	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
+		pathToFile := url.String()
+		pathToFile = path.Clean(pathToFile)
+		getSpec, ok := resolvePath[pathToFile]
+		if !ok {
+			err1 := fmt.Errorf("path not found: %s", pathToFile)
+			return nil, err1
+		}
+		return getSpec()
+	}
+	var specData []byte
+	specData, err = rawSpec()
+	if err != nil {
+		return
+	}
+	swagger, err = loader.LoadFromData(specData)
+	if err != nil {
+		return
+	}
+	return
 }

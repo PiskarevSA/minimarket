@@ -4,11 +4,18 @@
 package oapi
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
+	"encoding/base64"
 	json "github.com/bytedance/sonic"
 	"fmt"
 	"net/http"
+	"net/url"
+	"path"
+	"strings"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
@@ -28,14 +35,14 @@ const (
 	InsufficientPointsOnAccount InsufficientPointsMessage = "insufficient points on account"
 )
 
-// Defines values for InternalErrorCode.
+// Defines values for InternalServerErrorCode.
 const (
-	S1394 InternalErrorCode = "S1394"
+	S1394 InternalServerErrorCode = "S1394"
 )
 
-// Defines values for InternalErrorMessage.
+// Defines values for InternalServerErrorMessage.
 const (
-	InternalErrorMessageInternalError InternalErrorMessage = "internal error"
+	InternalServerError InternalServerErrorMessage = "internal server error"
 )
 
 // Defines values for InvalidOrderNumberCode.
@@ -45,7 +52,7 @@ const (
 
 // Defines values for InvalidOrderNumberMessage.
 const (
-	InvalidOrderNumberMessageInvalidOrderNumber InvalidOrderNumberMessage = "invalid order number"
+	InvalidOrderNumber InvalidOrderNumberMessage = "invalid order number"
 )
 
 // Defines values for UserUnauthenticatedCode.
@@ -55,7 +62,7 @@ const (
 
 // Defines values for UserUnauthenticatedMessage.
 const (
-	UserIsNotAuthenticated UserUnauthenticatedMessage = "user is not authenticated"
+	UserUnauthenticated UserUnauthenticatedMessage = "user unauthenticated"
 )
 
 // Balance defines model for Balance.
@@ -67,8 +74,8 @@ type Balance struct {
 	Withdrawn float32 `json:"withdrawn"`
 }
 
-// InsufficientPoints defines model for InsufficientPoints.
-type InsufficientPoints struct {
+// InsufficientPointsResponse defines model for InsufficientPoints.
+type InsufficientPointsResponse struct {
 	Code    InsufficientPointsCode    `json:"code"`
 	Message InsufficientPointsMessage `json:"message"`
 }
@@ -79,20 +86,20 @@ type InsufficientPointsCode string
 // InsufficientPointsMessage defines model for InsufficientPoints.Message.
 type InsufficientPointsMessage string
 
-// InternalError defines model for InternalError.
-type InternalError struct {
-	Code    InternalErrorCode    `json:"code"`
-	Message InternalErrorMessage `json:"message"`
+// InternalServerErrorResponse defines model for InternalServerError.
+type InternalServerErrorResponse struct {
+	Code    InternalServerErrorCode    `json:"code"`
+	Message InternalServerErrorMessage `json:"message"`
 }
 
-// InternalErrorCode defines model for InternalError.Code.
-type InternalErrorCode string
+// InternalServerErrorCode defines model for InternalServerError.Code.
+type InternalServerErrorCode string
 
-// InternalErrorMessage defines model for InternalError.Message.
-type InternalErrorMessage string
+// InternalServerErrorMessage defines model for InternalServerError.Message.
+type InternalServerErrorMessage string
 
-// InvalidOrderNumber defines model for InvalidOrderNumber.
-type InvalidOrderNumber struct {
+// InvalidOrderNumberResponse defines model for InvalidOrderNumber.
+type InvalidOrderNumberResponse struct {
 	Code    InvalidOrderNumberCode    `json:"code"`
 	Message InvalidOrderNumberMessage `json:"message"`
 }
@@ -103,8 +110,8 @@ type InvalidOrderNumberCode string
 // InvalidOrderNumberMessage defines model for InvalidOrderNumber.Message.
 type InvalidOrderNumberMessage string
 
-// UserUnauthenticated defines model for UserUnauthenticated.
-type UserUnauthenticated struct {
+// UserUnauthenticatedResponse defines model for UserUnauthenticated.
+type UserUnauthenticatedResponse struct {
 	Code    UserUnauthenticatedCode    `json:"code"`
 	Message UserUnauthenticatedMessage `json:"message"`
 }
@@ -130,7 +137,7 @@ type PointsWithdrawJSONRequestBody = Withdraw
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (POST /api/user/points)
+	// (GET /api/user/points)
 	PointsBalance(w http.ResponseWriter, r *http.Request)
 
 	// (POST /api/user/points/withdraw)
@@ -141,7 +148,7 @@ type ServerInterface interface {
 
 type Unimplemented struct{}
 
-// (POST /api/user/points)
+// (GET /api/user/points)
 func (_ Unimplemented) PointsBalance(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
@@ -318,7 +325,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/user/points", wrapper.PointsBalance)
+		r.Get(options.BaseURL+"/api/user/points", wrapper.PointsBalance)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/api/user/points/withdraw", wrapper.PointsWithdraw)
@@ -334,28 +341,28 @@ type PointsBalanceResponseObject interface {
 	VisitPointsBalanceResponse(w http.ResponseWriter) error
 }
 
-type PointsBalance200ApplicationProblemPlusJSONResponse Balance
+type PointsBalance200JSONResponse Balance
 
-func (response PointsBalance200ApplicationProblemPlusJSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response PointsBalance200JSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type PointsBalance401ApplicationProblemPlusJSONResponse UserUnauthenticated
+type PointsBalance401JSONResponse UserUnauthenticatedResponse
 
-func (response PointsBalance401ApplicationProblemPlusJSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response PointsBalance401JSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type PointsBalance500ApplicationProblemPlusJSONResponse InternalError
+type PointsBalance500JSONResponse InternalServerErrorResponse
 
-func (response PointsBalance500ApplicationProblemPlusJSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response PointsBalance500JSONResponse) VisitPointsBalanceResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
@@ -377,28 +384,28 @@ func (response PointsWithdraw200Response) VisitPointsWithdrawResponse(w http.Res
 	return nil
 }
 
-type PointsWithdraw402ApplicationProblemPlusJSONResponse InsufficientPoints
+type PointsWithdraw402JSONResponse InsufficientPointsResponse
 
-func (response PointsWithdraw402ApplicationProblemPlusJSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response PointsWithdraw402JSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(402)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type PointsWithdraw422ApplicationProblemPlusJSONResponse InvalidOrderNumber
+type PointsWithdraw422JSONResponse InvalidOrderNumberResponse
 
-func (response PointsWithdraw422ApplicationProblemPlusJSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response PointsWithdraw422JSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(422)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
 }
 
-type PointsWithdraw500ApplicationProblemPlusJSONResponse InternalError
+type PointsWithdraw500JSONResponse InternalServerErrorResponse
 
-func (response PointsWithdraw500ApplicationProblemPlusJSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/problem+json")
+func (response PointsWithdraw500JSONResponse) VisitPointsWithdrawResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.ConfigDefault.NewEncoder(w).Encode(response)
@@ -407,7 +414,7 @@ func (response PointsWithdraw500ApplicationProblemPlusJSONResponse) VisitPointsW
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 
-	// (POST /api/user/points)
+	// (GET /api/user/points)
 	PointsBalance(ctx context.Context, request PointsBalanceRequestObject) (PointsBalanceResponseObject, error)
 
 	// (POST /api/user/points/withdraw)
@@ -496,4 +503,99 @@ func (sh *strictHandler) PointsWithdraw(w http.ResponseWriter, r *http.Request) 
 	} else if response != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
 	}
+}
+
+// Base64 encoded, gzipped, json marshaled Swagger object
+var swaggerSpec = []string{
+
+	"H4sIAAAAAAAC/9xXXU/jRhf+K6PzvpcGJ4YAtVSpsGolth+gzSIuEKoG+ziZxZ6ZzowJEcp/r874M7a7",
+	"UClXvXM8nuc8z/nOGySq0EqidBbiN7DJGgvuH694zmWC9KiN0micQH+QlMagdPSYok2M0E4oCTF8qg5Y",
+	"rrY8d1umlZDOsqcaKAB85YXOEeLFbHa8CCBTpuAOYshyxR0E4LYaIQZZFk9oYBfARrh1avhGjq19VY7n",
+	"jY32O5aWRsgV40miSuIiMnSi2LN+Gr1veheAwb9KYTCF+KHV3Gf02F5ST98wccT3Wtoyy0QiULpbT23C",
+	"fyr1XkVZFoR9Nz+7uOihWUcKCK1Aa/lq72PRM9CIV7KRO4EyFELGO+SRhgBej1bqSPKCXo7lfEGrlbRY",
+	"iXVoJM+XaF7Q/GyMMu+rXc5Pfjj9uNrKArPeBENv4+AiRzL2Vb7wXKQ3JkXzR5UdHwjp7Cz6uEhvgCmy",
+	"wOoEPLjGoYi+xDuL5k7y0q1ROpFwRybe17iIzj+qsbRoWDkwcWCNEyr6Iu/rwh0r844fN5ibXjxYpgzb",
+	"rEWyboqOG+y6Tr+7QHRyfh5Fi7PoFIYCibDiWhyRshXKI3x1hh85vvJEfIy4owutG8gnlpw4pHdZ+Aan",
+	"soaRUy2hPp/zxTyAQkhREMp82On+PaWAFUL+OIfdMFyVHyu64+ZIOjApjXDbJU2ZyvdPyA2ay9Ktu1+/",
+	"NL358/1XgvNfQ1yfdk5dO6cpsolSzwIbDEHOqV5BAHVu8CRBa/906hllB8C1+BW3lRAhM1WluXQ88dMN",
+	"Cy5yiCvncfOM7ieeFkIeJ6rooH9vT9nN5+UnCKA0ec3OxmG4Em5dPtGd8FbYZ27wZXkZdpikYBDZXgoz",
+	"qhxiLFzeJDmjD6pzoSS7vL2GAF7Q2Or6/Hh2PCNUpVFyLSCGE/8qAM3d2rs95FqEBB3qdkqtcGKmf0Fn",
+	"BL5UPP55slM5eTbXKcRQjYqr9tTUZejNRLNZ4+d6i+Ba57WY8JtVsltE6On/BjOI4X9ht6mE9ZoSNiZ8",
+	"BPeJL0sf8qzMmak08JyKpeG8C+B0Nj8Yk6kWOsHKh0/YUSvcBbA4oF+mJvMEm+vJ8dqvVIgf9mv04XEX",
+	"vO1V3MPjjord94uHOvTwSCDDJAs3/Ras7ES6NU16mGnUfjmTuGFNk5nKuPuu/VFfQuuuVLo9mFdb+AlX",
+	"7g0LLlPGv9+eu77pTIm76RqZ9g2njPbqmDaKkhxTZtt0z7dVbkcHzKbRUjuZTN/dTIlTdEhOo61sktN4",
+	"tWL16v8fLDmPQrDWg+xb/k0lnVmqJ4fW0V8lXRqtKPGGk2sendPcOJ7HF7TM9Gy+NcOvSYfH3d8BAAD/",
+	"/+dJmyRKDgAA",
+}
+
+// GetSwagger returns the content of the embedded swagger specification file
+// or error if failed to decode
+func decodeSpec() ([]byte, error) {
+	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
+	if err != nil {
+		return nil, fmt.Errorf("error base64 decoding spec: %w", err)
+	}
+	zr, err := gzip.NewReader(bytes.NewReader(zipped))
+	if err != nil {
+		return nil, fmt.Errorf("error decompressing spec: %w", err)
+	}
+	var buf bytes.Buffer
+	_, err = buf.ReadFrom(zr)
+	if err != nil {
+		return nil, fmt.Errorf("error decompressing spec: %w", err)
+	}
+
+	return buf.Bytes(), nil
+}
+
+var rawSpec = decodeSpecCached()
+
+// a naive cached of a decoded swagger spec
+func decodeSpecCached() func() ([]byte, error) {
+	data, err := decodeSpec()
+	return func() ([]byte, error) {
+		return data, err
+	}
+}
+
+// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
+func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
+	res := make(map[string]func() ([]byte, error))
+	if len(pathToFile) > 0 {
+		res[pathToFile] = rawSpec
+	}
+
+	return res
+}
+
+// GetSwagger returns the Swagger specification corresponding to the generated code
+// in this file. The external references of Swagger specification are resolved.
+// The logic of resolving external references is tightly connected to "import-mapping" feature.
+// Externally referenced files must be embedded in the corresponding golang packages.
+// Urls can be supported but this task was out of the scope.
+func GetSwagger() (swagger *openapi3.T, err error) {
+	resolvePath := PathToRawSpec("")
+
+	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
+	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
+		pathToFile := url.String()
+		pathToFile = path.Clean(pathToFile)
+		getSpec, ok := resolvePath[pathToFile]
+		if !ok {
+			err1 := fmt.Errorf("path not found: %s", pathToFile)
+			return nil, err1
+		}
+		return getSpec()
+	}
+	var specData []byte
+	specData, err = rawSpec()
+	if err != nil {
+		return
+	}
+	swagger, err = loader.LoadFromData(specData)
+	if err != nil {
+		return
+	}
+	return
 }

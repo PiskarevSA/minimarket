@@ -8,12 +8,13 @@ info:
     email: minimarket@admin.com
     url: https://github.com/PiskarevSA/minimarket
 servers:
-  - url: https://api.example.com
+  - url: https://127.0.0.1:8624
+    description: Local server for testing purposes
 tags:
   - name: Points
 paths:
   /api/user/points:
-    post:
+    get:
       operationId: pointsBalance
       description: Retrieve user loyalty points balance
       tags:
@@ -25,21 +26,21 @@ paths:
         '200':
           description: Successful retrieval of balance
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Balance'
         '401':
-          description: User is not authenticated
+          description: User is unauthenticated
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/UserUnauthenticated'
         '500':
           description: Internal server error
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/InternalError'
+                $ref: '#/components/schemas/InternalServerError'
   /api/user/points/withdraw:
     post:
       operationId: pointsWithdraw
@@ -62,21 +63,21 @@ paths:
         '402':
           description: Insufficient points on account
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/InsufficientPoints'
         '422':
           description: Invalid order number format
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/InvalidOrderNumber'
         '500':
           description: Internal server error
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/InternalError'
+                $ref: '#/components/schemas/InternalServerError'
 components:
   securitySchemes:
     bearerAuth:
@@ -114,11 +115,12 @@ components:
         message:
           type: string
           enum:
-            - user is not authenticated
+            - user unauthenticated
       required:
         - code
         - message
-    InternalError:
+      x-go-name: UserUnauthenticatedResponse
+    InternalServerError:
       type: object
       properties:
         code:
@@ -128,10 +130,11 @@ components:
         message:
           type: string
           enum:
-            - internal error
+            - internal server error
       required:
         - code
         - message
+      x-go-name: InternalServerErrorResponse
     Withdraw:
       type: object
       properties:
@@ -165,6 +168,7 @@ components:
       required:
         - code
         - message
+      x-go-name: InsufficientPointsResponse
     InvalidOrderNumber:
       type: object
       properties:
@@ -179,3 +183,4 @@ components:
       required:
         - code
         - message
+      x-go-name: InvalidOrderNumberResponse

@@ -4,8 +4,8 @@ generate:
   chi-server: true
   strict-server: true
   models: true
-  embedded-spec: false
+  embedded-spec: true
 
-output: internal/handlers/oapi/oapi.gen.go
+output: internal/oapiserver/oapi/oapi.gen.go
 output-options:
   name-normalizer: ToCamelCaseWithInitialisms

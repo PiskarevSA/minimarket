@@ -33,7 +33,7 @@ tasks:
       codegen cannot create it automatically, so it must be created 
       before running code generation.
     cmds:
-      - mkdir -p ./internal/handlers/oapi
+      - mkdir -p ./internal/oapiserver/oapi
 
   run-codegen:
     dir: '{{ .DIR }}'
@@ -42,8 +42,9 @@ tasks:
       code. This command will create boilerplate server, client
       and models.
     cmds:
-      - oapi-codegen -config ./oapi-config.yaml ./oapi/combined.gen.yaml
-
+      - |
+        oapi-codegen -config ../../oapi-codegen.yaml ./oapi/combined.gen.yaml
+        
   optimize-generated-code:
     dir: '{{ .DIR }}'
     desc: |
@@ -51,6 +52,6 @@ tasks:
       encoding/json library with a faster alternative for improved 
       performance.
     cmds:
-      - sed -i 's|"encoding/json"|json "github.com/bytedance/sonic"|g' ./internal/handlers/oapi/oapi.gen.go
-      - sed -i 's|json\.NewEncoder|json.ConfigDefault.NewEncoder|g' ./internal/handlers/oapi/oapi.gen.go
-      - sed -i 's|json\.NewDecoder|json.ConfigDefault.NewDecoder|g' ./internal/handlers/oapi/oapi.gen.go
+      - sed -i 's|"encoding/json"|json "github.com/bytedance/sonic"|g' ./internal/oapiserver/oapi/oapi.gen.go
+      - sed -i 's|json\.NewEncoder|json.ConfigDefault.NewEncoder|g' ./internal/oapiserver/oapi/oapi.gen.go
+      - sed -i 's|json\.NewDecoder|json.ConfigDefault.NewDecoder|g' ./internal/oapiserver/oapi/oapi.gen.go

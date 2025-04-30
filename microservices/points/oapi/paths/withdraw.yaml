@@ -19,18 +19,18 @@ post:
     "402":
       description: Insufficient points on account
       content:
-        application/problem+json:
+        application/json:
           schema:
             $ref: "../components/schemas/errors/InsufficientPoints.yaml"
     "422":
       description: Invalid order number format
       content:
-        application/problem+json:
+        application/json:
           schema:
             $ref: "../components/schemas/errors/InvalidOrderNumber.yaml"
     "500":
       description: Internal server error
       content:
-        application/problem+json:
+        application/json:
           schema:
-            $ref: "../components/schemas/errors/InternalError.yaml"
+            $ref: "../components/schemas/errors/InternalServerError.yaml"

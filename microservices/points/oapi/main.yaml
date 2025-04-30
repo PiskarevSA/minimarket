@@ -8,8 +8,8 @@ info:
     email: minimarket@admin.com
     url: https://github.com/PiskarevSA/minimarket
 servers:
-  - url: https://api.example.com
-
+  - url: https://127.0.0.1:8624
+    description: Local server for testing purposes
 tags:
   - name: Points
 

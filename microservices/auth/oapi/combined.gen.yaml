@@ -8,7 +8,8 @@ info:
     email: minimarket@admin.com
     url: https://github.com/PiskarevSA/minimarket
 servers:
-  - url: https://api.example.com
+  - url: http://127.0.0.1:8461
+    description: Local server for testing purposes
 tags:
   - name: User
 paths:
@@ -44,21 +45,21 @@ paths:
         '400':
           description: Invalid payload format
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/InvalidPayloadFormat'
         '409':
           description: Login already in use
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/LoginConflict'
         '500':
           description: Internal server error
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/InternalError'
+                $ref: '#/components/schemas/InternalServerError'
   /api/user/login:
     post:
       operationId: userLogin
@@ -91,21 +92,21 @@ paths:
         '400':
           description: Invalid payload format
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/InvalidPayloadFormat'
         '401':
           description: Invalid login or password
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/InvalidLoginOrPassword'
         '500':
           description: Internal server error
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/InternalError'
+                $ref: '#/components/schemas/InternalServerError'
 components:
   schemas:
     Login:
@@ -161,6 +162,7 @@ components:
       required:
         - code
         - message
+      x-go-name: InvalidPayloadFormatResponse
     LoginConflict:
       type: object
       properties:
@@ -175,7 +177,8 @@ components:
       required:
         - code
         - message
-    InternalError:
+      x-go-name: LoginConflictResponse
+    InternalServerError:
       type: object
       properties:
         code:
@@ -185,10 +188,11 @@ components:
         message:
           type: string
           enum:
-            - internal error
+            - internal server error
       required:
         - code
         - message
+      x-go-name: InternalServerErrorResponse
     InvalidLoginOrPassword:
       type: object
       properties:
@@ -203,3 +207,4 @@ components:
       required:
         - code
         - message
+      x-go-name: InvalidLoginOrPasswordResponse

@@ -6,15 +6,11 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var authCli = &cli.Command{
+var Cli = &cli.Command{
 	Name:  "auth",
 	Usage: "Run 'auth' service",
 	Flags: flags,
 	Action: func(ctx context.Context, cmd *cli.Command) error {
 		return nil
 	},
-}
-
-func Cli() *cli.Command {
-	return authCli
 }

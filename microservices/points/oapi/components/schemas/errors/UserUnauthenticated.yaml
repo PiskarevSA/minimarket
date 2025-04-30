@@ -5,7 +5,8 @@ properties:
     enum: ["U1527"]
   message:
     type: string
-    enum: ["user is not authenticated"]
+    enum: ["user unauthenticated"]
 required:
   - code
   - message
+x-go-name: "UserUnauthenticatedResponse"

@@ -1,20 +1,25 @@
 package cli
 
 import (
+	"github.com/PiskarevSA/minimarket/microservices/points/internal/config"
 	"github.com/PiskarevSA/minimarket/pkg/valiadtors"
 	"github.com/urfave/cli/v3"
 )
 
 var (
 	logLevelFlag = &cli.StringFlag{
-		Name: "log.level",
+		Name:        "log.level",
+		Value:       "info",
+		Destination: &config.Config().LogLevel,
 		Validator: func(l string) error {
 			return valiadtors.ValidateLogLevel(l)
 		},
 	}
 
 	serverAddrFlag = &cli.StringFlag{
-		Name: "server.addr",
+		Name:        "server.addr",
+		Value:       "127.0.0.1:8624",
+		Destination: &config.Config().ServerAddr,
 		Validator: func(a string) error {
 			return valiadtors.ValidateAddr(a)
 		},

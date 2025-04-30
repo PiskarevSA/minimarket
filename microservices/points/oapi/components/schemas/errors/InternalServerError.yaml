@@ -5,7 +5,8 @@ properties:
     enum: ["S1394"]
   message:
     type: string
-    enum: ["internal error"]
+    enum: ["internal server error"]
 required:
   - code
   - message
+x-go-name: "InternalServerErrorResponse"
