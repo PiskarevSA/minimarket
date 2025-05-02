@@ -1,0 +1,17 @@
+version: '3.0'
+
+tasks:
+  run:
+    cmds:
+      - task: run-codegen
+        vars:
+          DIR: '{{ .DIR }}'
+
+  run-codegen:
+    dir: '{{ .DIR }}'
+    desc: |
+      Run sqlc to convert SQL queries into type-safe Go code. This
+      command will generate Go models, query functions, and database 
+      interfaces.
+    cmds:
+      - sqlc generate

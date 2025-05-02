@@ -29,15 +29,6 @@ paths:
       responses:
         '200':
           description: User successfully registered and authenticated
-          headers:
-            Set-Cookie:
-              description: Authentication cookie
-              schema:
-                type: string
-            Authorization:
-              description: Bearer token for authenticated sessions
-              schema:
-                type: string
           content:
             application/json:
               schema:
@@ -62,7 +53,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerError'
   /api/user/login:
     post:
-      operationId: userLogin
+      operationId: userLogIn
       description: Authenticate a user
       tags:
         - User
@@ -76,15 +67,6 @@ paths:
       responses:
         '200':
           description: User successfully authenticated
-          headers:
-            Set-Cookie:
-              description: Authentication cookie
-              schema:
-                type: string
-            Authorization:
-              description: Bearer token for authenticated sessions
-              schema:
-                type: string
           content:
             application/json:
               schema:
@@ -138,6 +120,7 @@ components:
           example: 292a6b41-550f-43d5-ba34-450b0f06f3a7
           x-oapi-codegen-extra-tags:
             validate: required
+          x-go-name: Id
         login:
           type: string
           minLength: 5
@@ -145,9 +128,23 @@ components:
           example: johndoe
           x-oapi-codegen-extra-tags:
             validate: required, min=5,max=32
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dummytoken
+          x-oapi-codegen-extra-tags:
+            validate: required
+          x-go-name: AccessToken
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dummyrefreshtoken
+          x-oapi-codegen-extra-tags:
+            validate: required
+          x-go-name: RefreshToken
       required:
         - id
         - login
+        - accessToken
+        - refreshToken
     InvalidPayloadFormat:
       type: object
       properties:

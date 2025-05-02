@@ -5,8 +5,12 @@ includes:
     taskfile: taskfiles/OapiCodegen.yaml
     internal: true
 
-  oapi-docsgen: 
-    taskfile: taskfiles/OapiCodegen.yaml
+  sqlc-codegen: 
+    taskfile: taskfiles/SqlcCodegen.yaml
+    internal: true
+
+  mockery-codegen: 
+    taskfile: taskfiles/MockeryCodegen.yaml
     internal: true
 
 vars:
@@ -35,3 +39,24 @@ tasks:
         task: oapi-codegen:run
         vars:
           DIR: "microservices/{{ .MICROSERVICE }}"
+
+  generate:sqlc:all:
+    desc: |
+      Run the sqlc code generation pipeline for every microservice.
+      This task iterates over all subdirectories under `microservices`,
+      converting SQL queries into type-safe Go code, including models,
+      query functions, and database interfaces for each microservice.
+    cmds:
+      - for: { var: MICROSERVICES, as: MICROSERVICE }
+        task: sqlc-codegen:run
+        vars:
+          DIR: "microservices/{{ .MICROSERVICE }}"
+
+  generate:mockery:all:
+    desc: |
+      Run the Mockery code generation pipeline for every microservice.
+      This task iterates over all subdirectories under `microservices`,
+      generating type-safe mock implementations for Go interfaces used
+      in testing for each microservice.
+    cmds:
+      - task: mockery-codegen:run

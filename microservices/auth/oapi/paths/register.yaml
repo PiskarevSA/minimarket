@@ -13,8 +13,6 @@ post:
   responses:
     "200":
       description: User successfully registered and authenticated
-      headers:
-        $ref: "../components/headers/Authenticated.yaml"
       content:
         application/json:
           schema:

@@ -1,0 +1,23 @@
+log-level: info
+
+template: testify
+template-schema: '{{.Template}}.schema.json'
+require-template-schema-exists: true
+
+formatter: goimports
+force-file-write: true
+
+all: true
+recursive: true
+exclude-subpkg-regex:
+  - pkg
+  - oapi$
+  - sqlc
+
+dir: '{{.InterfaceDir}}/mocks'
+filename: mocks.gen.go
+structname: '{{.Mock}}{{.InterfaceName}}'
+pkgname: 'mocks'
+
+packages:
+  github.com/PiskarevSA/minimarket:

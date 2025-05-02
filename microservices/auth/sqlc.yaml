@@ -7,11 +7,12 @@ sql:
     gen:
       go:
         package: users
-        out: internal/storage/postgre/sqlc/users
+        out: internal/storage/postgresql/sqlc/users
         sql_package: pgx/v5
         sql_driver: github.com/jackc/pgx/v5
         rename:
           id: Id
+          user_id: UserId
         overrides:
           - db_type: "uuid"
             go_type:

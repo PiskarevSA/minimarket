@@ -1,5 +1,5 @@
 post:
-  operationId: userLogin
+  operationId: userLogIn
   description: Authenticate a user
   tags:
     - User
@@ -13,8 +13,6 @@ post:
   responses:
     "200":
       description:  User successfully authenticated
-      headers:
-        $ref: "../components/headers/Authenticated.yaml"
       content:
         application/json:
           schema:

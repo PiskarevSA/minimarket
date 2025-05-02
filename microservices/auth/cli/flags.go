@@ -1,52 +1,61 @@
 package cli
 
 import (
-	"github.com/PiskarevSA/minimarket/microservices/auth/internal/config"
-	"github.com/PiskarevSA/minimarket/pkg/valiadtors"
 	"github.com/urfave/cli/v3"
+
+	"github.com/PiskarevSA/minimarket/microservices/auth/internal/config"
 )
+
+var flags = []cli.Flag{
+	logLevelFlag,
+	serverAddrFlag,
+	postgreSqlAddrFlag,
+	postgreSqlUserFlag,
+	postgreSqlPasswordFlag,
+	postgreSqlDbFlag,
+	postgreSqlSslModeFlag,
+}
 
 var (
 	logLevelFlag = &cli.StringFlag{
 		Name:        "log.level",
 		Value:       "info",
 		Destination: &config.Config().LogLevel,
-		Validator: func(l string) error {
-			return valiadtors.ValidateLogLevel(l)
-		},
 	}
 
 	serverAddrFlag = &cli.StringFlag{
 		Name:        "server.addr",
-		Value:       "127.0.0.1:8624",
+		Value:       "127.0.0.1:8461",
 		Destination: &config.Config().ServerAddr,
-		Validator: func(a string) error {
-			return valiadtors.ValidateAddr(a)
-		},
 	}
 
-	postgreAddrFlag = &cli.StringFlag{
-		Name: "postgre.addr",
+	postgreSqlAddrFlag = &cli.StringFlag{
+		Name:        "postgresql.addr",
+		Value:       "127.0.0.1:5432",
+		Destination: &config.Config().PostgreSqlAddr,
 	}
 
-	postgreUsernameFlag = &cli.StringFlag{
-		Name: "postgre.username",
+	postgreSqlUserFlag = &cli.StringFlag{
+		Name:        "postgresql.user",
+		Value:       "user",
+		Destination: &config.Config().PostgreSqlUser,
 	}
 
-	postgrePasswordFlag = &cli.StringFlag{
-		Name: "postgre.password",
+	postgreSqlPasswordFlag = &cli.StringFlag{
+		Name:        "postgresql.password",
+		Value:       "password",
+		Destination: &config.Config().PostgreSqlPassword,
 	}
 
-	jwtSecretFlag = &cli.StringFlag{
-		Name: "jwt.secret",
+	postgreSqlDbFlag = &cli.StringFlag{
+		Name:        "postgresql.db",
+		Value:       "postgres",
+		Destination: &config.Config().PostgreSqlDb,
+	}
+
+	postgreSqlSslModeFlag = &cli.BoolFlag{
+		Name:        "postgresql.sslmode",
+		Value:       false,
+		Destination: &config.Config().PostgreSqlSslMode,
 	}
 )
-
-var flags = []cli.Flag{
-	logLevelFlag,
-	serverAddrFlag,
-	postgreAddrFlag,
-	postgreUsernameFlag,
-	postgrePasswordFlag,
-	jwtSecretFlag,
-}

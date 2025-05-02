@@ -12,10 +12,11 @@ import (
 	"github.com/urfave/cli/v3"
 
 	authcli "github.com/PiskarevSA/minimarket/microservices/auth/cli"
-	pointscli "github.com/PiskarevSA/minimarket/microservices/points/cli"
 )
 
-func init() {
+func main() {
+	rootCtx := context.Background()
+
 	zerolog.LevelFieldName = "lvl"
 	zerolog.ErrorFieldName = "err"
 	zerolog.MessageFieldName = "msg"
@@ -25,13 +26,13 @@ func init() {
 		Level(zerolog.InfoLevel).With().
 		Timestamp().
 		Logger()
-}
 
-func main() {
-	rootCtx := context.Background()
-	signals := []os.Signal{syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL}
-
-	stopCtx, stop := signal.NotifyContext(rootCtx, signals...)
+	stopCtx, stop := signal.NotifyContext(
+		rootCtx,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGKILL,
+	)
 	defer stop()
 
 	rootCli := cli.Command{
@@ -39,7 +40,6 @@ func main() {
 		Version: "1.0.0",
 		Commands: []*cli.Command{
 			authcli.Cli,
-			pointscli.Cli,
 		},
 	}
 

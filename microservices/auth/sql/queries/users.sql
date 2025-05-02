@@ -1,36 +1,8 @@
--- name: CreateUser :one
-WITH inserted AS (
-    INSERT INTO 
-        users (
-            id, 
-            login, 
-            password_hash, 
-            password_salt
-        )
-    VALUES 
-        (
-            @id :: UUID, 
-            @login :: TEXT, 
-            @password_hash :: TEXT, 
-            @password_salt :: TEXT
-        )
-    ON CONFLICT (login) 
-        DO NOTHING
-    RETURNING 0 AS status
-)
+-- name: CreateUser :exec
+INSERT INTO users (id, login, password_hash)
+VALUES (@id, @login, @password_hash);
 
-SELECT 
-    status
-FROM 
-    inserted
-UNION ALL
-SELECT 
-    1 AS code
-FROM 
-    users
-WHERE 
-    login = @login :: TEXT
-    AND NOT EXISTS (SELECT
-        1 FROM inserted
-    )
-LIMIT 1;
+-- name: GetUserCreds :one
+SELECT id AS user_id, password_hash
+FROM users
+WHERE login = @login;
