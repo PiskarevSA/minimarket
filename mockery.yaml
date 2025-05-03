@@ -1,6 +1,6 @@
 log-level: info
 
-template: testify
+template: matryer
 template-schema: '{{.Template}}.schema.json'
 require-template-schema-exists: true
 
@@ -14,10 +14,10 @@ exclude-subpkg-regex:
   - oapi$
   - sqlc
 
-dir: '{{.InterfaceDir}}/mocks'
+dir: '{{.InterfaceDir}}'
 filename: mocks.gen.go
 structname: '{{.Mock}}{{.InterfaceName}}'
-pkgname: 'mocks'
+pkgname: '{{.SrcPackageName}}'
 
 packages:
   github.com/PiskarevSA/minimarket:

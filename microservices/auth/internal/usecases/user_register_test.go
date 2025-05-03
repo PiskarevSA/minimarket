@@ -6,13 +6,11 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/suite"
-
-	"github.com/PiskarevSA/minimarket/microservices/auth/internal/usecases/mocks"
 )
 
 type userRegisterSuite struct {
 	suite.Suite
-	mockStorage *mocks.MockUserStorage
+	mockStorage *MockUserStorage
 	usecase     *UserRegister
 }
 
@@ -21,7 +19,7 @@ func TestUserRegister(t *testing.T) {
 }
 
 func (s *userRegisterSuite) SetupTest() {
-	s.mockStorage = new(mocks.MockUserStorage)
+	s.mockStorage = new(MockUserStorage)
 	s.usecase = NewUserRegister(
 		s.mockStorage,
 		[]byte("jwt"),
