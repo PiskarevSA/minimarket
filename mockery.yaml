@@ -1,23 +1,11 @@
-log-level: info
-
 template: matryer
-template-schema: '{{.Template}}.schema.json'
-require-template-schema-exists: true
-
-formatter: goimports
-force-file-write: true
 
 all: true
 recursive: true
 exclude-subpkg-regex:
-  - pkg
-  - oapi$
-  - sqlc
-
-dir: '{{.InterfaceDir}}'
-filename: mocks.gen.go
-structname: '{{.Mock}}{{.InterfaceName}}'
-pkgname: '{{.SrcPackageName}}'
+- pkg
+- oapi$
+- sqlc
 
 packages:
   github.com/PiskarevSA/minimarket:
