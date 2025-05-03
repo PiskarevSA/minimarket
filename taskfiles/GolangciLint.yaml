@@ -1,0 +1,15 @@
+version: '3.0'
+
+tasks:
+  run:
+    cmds:
+    - task: run-lint
+      vars:
+        DIR: '{{ .DIR }}'
+
+  run-lint:
+    dir: '{{ .DIR }}'
+    desc: |
+      Run golangci-lint from docker container to lint go files in workspace.
+    cmds:
+    - docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v2.1.5 golangci-lint run -c .golangci-lint.yaml --fix

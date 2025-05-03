@@ -1,4 +1,4 @@
-package valiadtors
+package validators
 
 import (
 	"regexp"
@@ -7,6 +7,7 @@ import (
 
 func lazyRegexCompile(str string) func() *regexp.Regexp {
 	var regex *regexp.Regexp
+
 	var once sync.Once
 
 	return func() *regexp.Regexp {

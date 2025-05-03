@@ -17,6 +17,7 @@ type CtxKey[ValueT any] struct {
 
 func New[ValueT any](name string, defaultValue ValueT) CtxKey[ValueT] {
 	key := CtxKey[ValueT]{name: new(stringer[string])}
+
 	if name == "" {
 		name = reflect.TypeFor[ValueT]().String()
 	}
@@ -38,9 +39,14 @@ func (key CtxKey[ValueT]) contextKey() any {
 
 	return key.name
 }
-func (k CtxKey[ValueT]) WithValue(parent context.Context, val ValueT) context.Context {
+
+func (k CtxKey[ValueT]) WithValue(
+	parent context.Context,
+	val ValueT,
+) context.Context {
 	key := k.contextKey()
 	stringer := stringer[ValueT]{val}
+
 	return context.WithValue(parent, key, stringer)
 }
 
@@ -55,11 +61,13 @@ func (k CtxKey[ValueT]) ValueOk(ctx context.Context) (ValueT, bool) {
 
 func (k CtxKey[ValueT]) Value(ctx context.Context) ValueT {
 	v, _ := k.ValueOk(ctx)
+
 	return v
 }
 
 func (k CtxKey[ValueT]) Has(ctx context.Context) bool {
 	_, ok := k.ValueOk(ctx)
+
 	return ok
 }
 

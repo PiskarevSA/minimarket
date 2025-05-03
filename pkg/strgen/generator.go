@@ -27,6 +27,7 @@ type Generator struct {
 
 func newGenerator(opts ...Option) *Generator {
 	var seed [32]byte
+
 	cryptorand.Read(seed[:])
 
 	chaCha8 := rand.NewChaCha8(seed)

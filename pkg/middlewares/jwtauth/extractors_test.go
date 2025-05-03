@@ -67,6 +67,7 @@ func (s *testExtractorsSuite) TestExtractFromCookie_Success() {
 		Name:  "jwt",
 		Value: s.tokenString,
 	})
+
 	extractor := ExtractFromCookie("jwt")
 
 	tokenString := extractor(req)

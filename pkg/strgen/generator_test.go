@@ -45,6 +45,7 @@ func (s *testGeneratorSuite) TestGenerate_CustomAlphabet() {
 
 func (s *testGeneratorSuite) TestGenerator_Concurrent() {
 	var strs sync.Map
+
 	var wg sync.WaitGroup
 
 	queue := make(chan struct{}, 10)

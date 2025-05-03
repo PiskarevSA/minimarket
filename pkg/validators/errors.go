@@ -1,4 +1,4 @@
-package valiadtors
+package validators
 
 import "errors"
 

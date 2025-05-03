@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/PiskarevSA/minimarket/microservices/auth/internal/storage"
 	"github.com/jackc/pgx/v5"
+
+	"github.com/PiskarevSA/minimarket/microservices/auth/internal/storage"
 )
 
 func (s *User) GetUserCreds(

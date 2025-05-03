@@ -12,6 +12,7 @@ func RestoreEcdsaPrivateKey(file string) (*ecdsa.PrivateKey, error) {
 	rawKey, err := os.ReadFile(file)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", errMsgFailedToReadPrivKeyFile, err)
+
 		return nil, err
 	}
 
@@ -23,6 +24,7 @@ func RestoreEcdsaPrivateKey(file string) (*ecdsa.PrivateKey, error) {
 	key, err := x509.ParseECPrivateKey(block.Bytes)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", errMsgFailedToParsePrivKey, err)
+
 		return nil, err
 	}
 
@@ -33,6 +35,7 @@ func RestoreEcdsaPublicKey(file string) (*ecdsa.PublicKey, error) {
 	rawKey, err := os.ReadFile(file)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", errMsgFailedToReadPubKeyFile, err)
+
 		return nil, err
 	}
 
@@ -44,6 +47,7 @@ func RestoreEcdsaPublicKey(file string) (*ecdsa.PublicKey, error) {
 	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", errMsgFailedToParsePubKey, err)
+
 		return nil, err
 	}
 

@@ -17,5 +17,6 @@ func (r *pooledZlibReader) Read(p []byte) (int, error) {
 func (r *pooledZlibReader) Close() error {
 	err := r.zr.Close()
 	r.pool.Put(r.zr)
+
 	return err
 }

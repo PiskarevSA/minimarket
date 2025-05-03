@@ -28,11 +28,18 @@ func Decompress(next http.Handler) http.Handler {
 		switch encoding {
 		case "deflate":
 			zr := zlibReaderPool.Get().(io.ReadCloser)
+
 			err := zr.(zlib.Resetter).Reset(req.Body, nil)
 			if err != nil {
-				http.Error(rw, errMsgFailedToDecompressBody, http.StatusBadRequest)
+				http.Error(
+					rw,
+					errMsgFailedToDecompressBody,
+					http.StatusBadRequest,
+				)
+
 				return
 			}
+
 			defer zr.Close()
 
 			deleteContentEncoding(req)
@@ -43,11 +50,18 @@ func Decompress(next http.Handler) http.Handler {
 
 		case "gzip":
 			gr := gzipReaderPool.Get().(*gzip.Reader)
+
 			err := gr.Reset(req.Body)
 			if err != nil {
-				http.Error(rw, errMsgFailedToDecompressBody, http.StatusBadRequest)
+				http.Error(
+					rw,
+					errMsgFailedToDecompressBody,
+					http.StatusBadRequest,
+				)
+
 				return
 			}
+
 			defer gr.Close()
 
 			deleteContentEncoding(req)

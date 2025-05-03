@@ -19,25 +19,32 @@ func parseErrorToMsg(err error) string {
 	return ErrMsgUnauthorized
 }
 
-func Authenticate(ja *JwtAuth, extractor Extractor) func(http.Handler) http.Handler {
+func Authenticate(
+	ja *JwtAuth,
+	extractor Extractor,
+) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		hfn := func(rw http.ResponseWriter, req *http.Request) {
 			tokenString := extractor(req)
 			if tokenString == "" {
 				http.Error(rw, ErrMsgNoTokenFound, http.StatusUnauthorized)
+
 				return
 			}
 
 			ctx := req.Context()
+
 			token, err := jwt.Parse(tokenString, ja.ParseFn(ctx, ja))
 			if err != nil {
 				msg := parseErrorToMsg(err)
 				http.Error(rw, msg, http.StatusUnauthorized)
+
 				return
 			}
 
 			if !token.Valid {
 				http.Error(rw, ErrMsgUnauthorized, http.StatusUnauthorized)
+
 				return
 			}
 
@@ -45,6 +52,7 @@ func Authenticate(ja *JwtAuth, extractor Extractor) func(http.Handler) http.Hand
 				err := validator(ctx, token)
 				if err != nil {
 					http.Error(rw, err.Error(), http.StatusUnauthorized)
+
 					return
 				}
 			}

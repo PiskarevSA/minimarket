@@ -62,7 +62,9 @@ func (s *testAuthenticateSuite) TestAuthenticate_NoToken() {
 }
 
 func (s *testAuthenticateSuite) TestAuthenticate_ExpiredToken() {
-	claims := jwt.MapClaims{"exp": jwt.NewNumericDate(time.Now().Add(-time.Hour))}
+	claims := jwt.MapClaims{
+		"exp": jwt.NewNumericDate(time.Now().Add(-time.Hour)),
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, _ := token.SignedString(s.secretKey)
@@ -76,5 +78,4 @@ func (s *testAuthenticateSuite) TestAuthenticate_ExpiredToken() {
 	msg = strings.ReplaceAll(msg, "\n", "")
 
 	s.Require().Equal(ErrMsgExpired, msg)
-
 }

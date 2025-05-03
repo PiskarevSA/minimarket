@@ -14,9 +14,14 @@ const (
 	ErrorCtxKey = JwtAuthKey("jwtErrorCtxKey")
 )
 
-func PassTokenToContext(ctx context.Context, token *jwt.Token, err error) context.Context {
+func PassTokenToContext(
+	ctx context.Context,
+	token *jwt.Token,
+	err error,
+) context.Context {
 	ctx = context.WithValue(ctx, TokenCtxKey, token)
 	ctx = context.WithValue(ctx, ErrorCtxKey, err)
+
 	return ctx
 }
 
@@ -29,6 +34,7 @@ func GetTokenFromContext(ctx context.Context) (*jwt.Token, error) {
 	token, ok := ctx.Value(TokenCtxKey).(*jwt.Token)
 	if !ok {
 		msg := "failed to assert token"
+
 		return nil, fmt.Errorf("%w: %s", ErrInvalidGoType, msg)
 	}
 

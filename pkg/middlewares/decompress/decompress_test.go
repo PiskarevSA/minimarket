@@ -48,6 +48,7 @@ func (s *testDecompressSuite) SetupTest() {
 		s.Require().Equal(s.payload, payload, errMsg)
 
 		errMsg = "invalid content length"
+
 		s.Require().Equal(s.payloadSize, req.ContentLength)
 	}
 

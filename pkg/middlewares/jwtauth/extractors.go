@@ -1,6 +1,7 @@
 package jwtauth
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 )
@@ -19,7 +20,7 @@ func ExtractFromAuthHeader(req *http.Request) string {
 func ExtractFromCookie(cookie string) Extractor {
 	return func(req *http.Request) string {
 		cookie, err := req.Cookie(cookie)
-		if err == http.ErrNoCookie {
+		if errors.Is(err, http.ErrNoCookie) {
 			return ""
 		}
 
