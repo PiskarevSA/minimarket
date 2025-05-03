@@ -74,8 +74,10 @@ linters:
   - usetesting
   - wastedassign
   - whitespace
-  exclude_paths:
-  - "*.gen.go"
+  settings:
+    cyclop:
+      max-complexity: 30
+      package-average: 10.0
 
 formatters:
   enable:
@@ -87,8 +89,3 @@ formatters:
       - github.com/PiskarevSA/minimarket
     golines:
       max-len: 80
-
-settings:
-  cyclop:
-    max-complexity: 30
-    package-average: 10.0
