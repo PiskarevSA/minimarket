@@ -3,55 +3,51 @@ version: '3.0'
 tasks:
   run:
     cmds:
-      - task: bundle-oapi
-        vars:
-          DIR: '{{ .DIR }}'
-      - task: create-dir
-        vars:
-          DIR: '{{ .DIR }}'
-      - task: run-codegen
-        vars:
-          DIR: '{{ .DIR }}'
-      - task: optimize-generated-code
-        vars:
-          DIR: '{{ .DIR }}'
-  
+    - task: bundle-oapi
+      vars:
+        DIR: '{{ .DIR }}'
+    - task: create-dir
+      vars:
+        DIR: '{{ .DIR }}'
+    - task: run-codegen
+      vars:
+        DIR: '{{ .DIR }}'
+    - task: optimize-generated-code
+      vars:
+        DIR: '{{ .DIR }}'
+
   bundle-oapi:
     dir: '{{ .DIR }}'
     desc: |
       Combine all OpenAPI manifests into a single file before running
-      oapi-codegen. This is necessary because oapi-codegen is unable
-      to generate code from a specification split between multiple 
-      files.
+      oapi-codegen. This is necessary because oapi-codegen is unable to
+      generate code from a specification split between multiple files.
     cmds:
-      - redocly bundle ./oapi/main.yaml -o ./oapi/combined.gen.yaml
+    - redocly bundle ./oapi/main.yaml -o ./oapi/combined.gen.yaml
 
   create-dir:
     dir: '{{ .DIR }}'
     desc: |
-      Ensure the output directory exists for generated files. oapi-
-      codegen cannot create it automatically, so it must be created 
-      before running code generation.
+      Ensure the output directory exists for generated files. oapi-codegen
+      cannot create it automatically, so it must be created before running code
+      generation.
     cmds:
-      - mkdir -p ./internal/oapiserver/oapi
+    - mkdir -p ./internal/oapiserver/oapi
 
   run-codegen:
     dir: '{{ .DIR }}'
     desc: |
-      Run oapi-codegen to to convert OpenAPI specifications to Go 
-      code. This command will create boilerplate server, client
-      and models.
+      Run oapi-codegen to convert OpenAPI specifications to Go code. This
+      command will create boilerplate server, client and models.
     cmds:
-      - |
-        oapi-codegen -config ../../oapi-codegen.yaml ./oapi/combined.gen.yaml
-        
+    - oapi-codegen -config ../../oapi-codegen.yaml ./oapi/combined.gen.yaml
+
   optimize-generated-code:
     dir: '{{ .DIR }}'
     desc: |
-      Optimize the generated code by replacing the standard 
-      encoding/json library with a faster alternative for improved 
-      performance.
+      Optimize the generated code by replacing the standard encoding/json
+      library with a faster alternative for improved performance.
     cmds:
-      - sed -i 's|"encoding/json"|json "github.com/bytedance/sonic"|g' ./internal/oapiserver/oapi/oapi.gen.go
-      - sed -i 's|json\.NewEncoder|json.ConfigDefault.NewEncoder|g' ./internal/oapiserver/oapi/oapi.gen.go
-      - sed -i 's|json\.NewDecoder|json.ConfigDefault.NewDecoder|g' ./internal/oapiserver/oapi/oapi.gen.go
+    - sed -i 's|"encoding/json"|json "github.com/bytedance/sonic"|g' ./internal/oapiserver/oapi/oapi.gen.go
+    - sed -i 's|json\.NewEncoder|json.ConfigDefault.NewEncoder|g' ./internal/oapiserver/oapi/oapi.gen.go
+    - sed -i 's|json\.NewDecoder|json.ConfigDefault.NewDecoder|g' ./internal/oapiserver/oapi/oapi.gen.go

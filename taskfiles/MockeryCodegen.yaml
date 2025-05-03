@@ -3,7 +3,7 @@ version: '3.0'
 tasks:
   run:
     cmds:
-      - task: run-codegen
+    - task: run-codegen
 
   run-codegen:
     desc: |
@@ -11,4 +11,4 @@ tasks:
       This command will create type-safe mock structs and methods for 
       testing purposes.
     cmds:
-      - mockery --config mockery.yaml
+    - mockery

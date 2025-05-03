@@ -1,15 +1,15 @@
 version: '3.0'
 
 includes:
-  oapi-codegen: 
+  oapi-codegen:
     taskfile: taskfiles/OapiCodegen.yaml
     internal: true
 
-  sqlc-codegen: 
+  sqlc-codegen:
     taskfile: taskfiles/SqlcCodegen.yaml
     internal: true
 
-  mockery-codegen: 
+  mockery-codegen:
     taskfile: taskfiles/MockeryCodegen.yaml
     internal: true
 
@@ -21,13 +21,12 @@ tasks:
   generate:oapi:*:
     desc: |
       Run the full oapi-codegen pipeline for a single microservice.
-      This task will only execute for the directory specified by the
-      argument (e.g. `task generate:oapi:auth` runs only for
-      `microservices/auth`).
+      This task will only execute for the directory specified by the argument
+      (e.g. `task generate:oapi:auth` runs only for `microservices/auth`).
     cmds:
-      - task: oapi-codegen:run
-        vars:
-          DIR: "microservices/{{index .MATCH 0}}"
+    - task: oapi-codegen:run
+      vars:
+        DIR: "microservices/{{index .MATCH 0}}"
 
   generate:oapi:all:
     desc: |
@@ -35,10 +34,10 @@ tasks:
       This task iterates over all subdirectories under `microservices`
       and invokes code generation for each one.
     cmds:
-      - for: { var: MICROSERVICES, as: MICROSERVICE }
-        task: oapi-codegen:run
-        vars:
-          DIR: "microservices/{{ .MICROSERVICE }}"
+    - for: { var: MICROSERVICES, as: MICROSERVICE }
+      task: oapi-codegen:run
+      vars:
+        DIR: "microservices/{{ .MICROSERVICE }}"
 
   generate:sqlc:all:
     desc: |
@@ -47,10 +46,10 @@ tasks:
       converting SQL queries into type-safe Go code, including models,
       query functions, and database interfaces for each microservice.
     cmds:
-      - for: { var: MICROSERVICES, as: MICROSERVICE }
-        task: sqlc-codegen:run
-        vars:
-          DIR: "microservices/{{ .MICROSERVICE }}"
+    - for: { var: MICROSERVICES, as: MICROSERVICE }
+      task: sqlc-codegen:run
+      vars:
+        DIR: "microservices/{{ .MICROSERVICE }}"
 
   generate:mockery:all:
     desc: |
@@ -59,4 +58,4 @@ tasks:
       generating type-safe mock implementations for Go interfaces used
       in testing for each microservice.
     cmds:
-      - task: mockery-codegen:run
+    - task: mockery-codegen:run
