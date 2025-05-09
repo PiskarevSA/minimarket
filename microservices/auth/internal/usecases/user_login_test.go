@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -23,12 +22,10 @@ func (s *userLogInSuite) SetupTest() {
 	s.usecase = NewUserLogIn(
 		s.mockStorage,
 		[]byte("jwt"),
-		jwt.SigningMethodHS256,
 		time.Hour,
 		12*time.Hour,
 	)
 }
 
 func (s *userLogInSuite) TestUserLogIn() {
-
 }

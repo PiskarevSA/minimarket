@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v3"
@@ -31,17 +31,21 @@ var Cli = &cli.Command{
 
 		userStorage := postgresql.NewUser(pool)
 
+		jwtSignKeyBytes, err := os.ReadFile(config.Config().JwtSignKeyFilePath)
+		if err != nil {
+			log.Fatal().Err(err).Send()
+		}
+		jwtSignKey := string(jwtSignKeyBytes)
+
 		userRegister := usecases.NewUserRegister(
 			userStorage,
-			[]byte("jwt"),
-			jwt.SigningMethodHS256,
+			jwtSignKey,
 			time.Hour,
 			24*time.Hour,
 		)
 		userLogIn := usecases.NewUserLogIn(
 			userStorage,
-			[]byte("jwt"),
-			jwt.SigningMethodHS256,
+			jwtSignKey,
 			time.Hour,
 			24*time.Hour,
 		)
@@ -72,6 +76,8 @@ var Cli = &cli.Command{
 		}()
 
 		<-ctx.Done()
+
+		log.Info().Msg("server stopped")
 
 		return nil
 	},

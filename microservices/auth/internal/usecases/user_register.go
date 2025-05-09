@@ -5,11 +5,11 @@ import (
 	"errors"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/PiskarevSA/minimarket/microservices/auth/internal/config"
 	"github.com/PiskarevSA/minimarket/microservices/auth/internal/models"
 	"github.com/PiskarevSA/minimarket/microservices/auth/internal/storage"
 )
@@ -17,7 +17,6 @@ import (
 type UserRegister struct {
 	storage          UserStorage
 	jwtSignKey       any
-	jwtAlgo          jwt.SigningMethod
 	jwtAccessExpiry  time.Duration
 	jwtRefreshExpiry time.Duration
 }
@@ -25,14 +24,12 @@ type UserRegister struct {
 func NewUserRegister(
 	storage UserStorage,
 	jwtSignKey any,
-	jwtAlgo jwt.SigningMethod,
 	jwtAccessExpiry time.Duration,
 	jwtRefreshExpiry time.Duration,
 ) *UserRegister {
 	return &UserRegister{
 		storage:          storage,
 		jwtSignKey:       jwtSignKey,
-		jwtAlgo:          jwtAlgo,
 		jwtAccessExpiry:  jwtAccessExpiry,
 		jwtRefreshExpiry: jwtRefreshExpiry,
 	}
@@ -85,7 +82,7 @@ func (u *UserRegister) Do(
 		u.jwtAccessExpiry,
 		u.jwtRefreshExpiry,
 		u.jwtSignKey,
-		u.jwtAlgo,
+		config.JwtAlgo(),
 	)
 	if err != nil {
 		log.Error().

@@ -1,6 +1,10 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 var conf config
 
@@ -12,7 +16,7 @@ type config struct {
 	PostgreSqlPassword string
 	PostgreSqlDb       string
 	PostgreSqlSslMode  bool
-	JwtSignKey         string
+	JwtSignKeyFilePath string
 }
 
 func Config() *config {
@@ -27,8 +31,12 @@ func ServerAddr() string {
 	return conf.ServerAddr
 }
 
-func JwtSignKey() string {
-	return conf.JwtSignKey
+func JwtSignKeyFilePath() string {
+	return conf.JwtSignKeyFilePath
+}
+
+func JwtAlgo() jwt.SigningMethod {
+	return jwt.SigningMethodES256
 }
 
 func PostgreSqlConnUrl() string {

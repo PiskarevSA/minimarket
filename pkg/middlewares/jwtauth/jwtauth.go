@@ -24,10 +24,9 @@ func New(secretKey any, opts ...Option) *JwtAuth {
 		Alg:          DefaultAlg,
 		SignKey:      secretKey,
 		VerifyKey:    secretKey,
+		ParseFn:      DefaultParseFn,
 		ValidatorFns: make([]ValidatorFn, 0),
 	}
-
-	ja.ParseFn = DefaultParseFn
 
 	for _, opt := range opts {
 		opt(ja)

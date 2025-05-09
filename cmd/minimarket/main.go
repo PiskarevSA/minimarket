@@ -29,9 +29,8 @@ func main() {
 
 	stopCtx, stop := signal.NotifyContext(
 		rootCtx,
-		syscall.SIGINT,
-		syscall.SIGTERM,
-		syscall.SIGKILL,
+		syscall.SIGINT,  // Ctrl+C
+		syscall.SIGTERM, // default for docker
 	)
 	defer stop()
 

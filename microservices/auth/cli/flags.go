@@ -9,6 +9,7 @@ import (
 var flags = []cli.Flag{
 	logLevelFlag,
 	serverAddrFlag,
+	jwtSignKeyFilePath,
 	postgreSqlAddrFlag,
 	postgreSqlUserFlag,
 	postgreSqlPasswordFlag,
@@ -21,6 +22,13 @@ var (
 		Name:        "log.level",
 		Value:       "info",
 		Destination: &config.Config().LogLevel,
+	}
+
+	jwtSignKeyFilePath = &cli.StringFlag{
+		Name:        "jwt.signkeyfilepath",
+		Value:       "jwt.pem",
+		Usage:       "path to file with sign key for ES256 algorithm",
+		Destination: &config.Config().JwtSignKeyFilePath,
 	}
 
 	serverAddrFlag = &cli.StringFlag{
