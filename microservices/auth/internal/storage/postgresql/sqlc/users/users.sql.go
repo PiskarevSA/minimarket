@@ -28,9 +28,12 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 }
 
 const getUserCreds = `-- name: GetUserCreds :one
-SELECT id AS user_id, password_hash
+SELECT
+    id AS user_id,
+    password_hash
 FROM users
-WHERE login = $1
+WHERE
+    login = $1
 `
 
 type GetUserCredsRow struct {

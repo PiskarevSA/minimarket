@@ -2,6 +2,10 @@
 dialect = postgres
 exclude_rules = LT01
 max_line_length = 64
+templater = placeholder
+
+[sqlfluff:templater:placeholder]
+param_regex = @(?P<param_name>[\w_]+)(::(?P<param_type>[\w_\[\]]+))?
 
 [sqlfluff:rules:layout.indent]
 indent_unit = space

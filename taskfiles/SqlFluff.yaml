@@ -1,0 +1,27 @@
+version: "3.0"
+
+tasks:
+  run:
+    cmds:
+      - task: run-parse
+      - task: run-lint
+
+  run-parse:
+    desc: |
+      Run sqlfluff from docker container to parse sql files in workspace.
+    cmds:
+      - >
+        docker run -t --rm
+        -v $(pwd):/sql
+        sqlfluff/sqlfluff:latest
+        parse .
+
+  run-lint:
+    desc: |
+      Run sqlfluff from docker container to lint sql files in workspace.
+    cmds:
+      - >
+        docker run -t --rm
+        -v $(pwd):/sql
+        sqlfluff/sqlfluff:latest
+        lint

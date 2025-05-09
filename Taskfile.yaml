@@ -17,6 +17,10 @@ includes:
     taskfile: taskfiles/GolangciLint.yaml
     internal: true
 
+  sqlfluff:
+    taskfile: taskfiles/SqlFluff.yaml
+    internal: true
+
 vars:
   MICROSERVICES:
     sh: ls microservices*/
@@ -69,3 +73,9 @@ tasks:
       Run golangci-lint with local config
     cmds:
     - task: golangci-lint:run
+
+  lint:sqlfluff:all:
+    desc: |
+      Run sqlfluff with local config
+    cmds:
+    - task: sqlfluff:run

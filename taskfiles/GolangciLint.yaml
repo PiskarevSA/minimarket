@@ -4,11 +4,8 @@ tasks:
   run:
     cmds:
       - task: run-lint
-        vars:
-          DIR: "{{ .DIR }}"
 
   run-lint:
-    dir: "{{ .DIR }}"
     desc: |
       Run golangci-lint from docker container to lint go files in workspace.
     cmds:
