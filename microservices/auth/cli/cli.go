@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"crypto/x509"
 	"errors"
 	"net/http"
 	"os"
@@ -26,16 +27,20 @@ var Cli = &cli.Command{
 	Action: func(ctx context.Context, c *cli.Command) error {
 		pool, err := pgxpool.New(ctx, config.PostgreSqlConnUrl())
 		if err != nil {
-			log.Fatal().Err(err).Send()
+			log.Fatal().Err(err).Msg("create connection pool")
 		}
 
 		userStorage := postgresql.NewUser(pool)
 
 		jwtSignKeyBytes, err := os.ReadFile(config.Config().JwtSignKeyFilePath)
 		if err != nil {
-			log.Fatal().Err(err).Send()
+			log.Fatal().Err(err).Msgf("read private key from file")
 		}
-		jwtSignKey := string(jwtSignKeyBytes)
+
+		jwtSignKey, err := x509.ParseECPrivateKey(jwtSignKeyBytes)
+		if err != nil {
+			log.Fatal().Err(err).Msg("parse private key")
+		}
 
 		userRegister := usecases.NewUserRegister(
 			userStorage,
