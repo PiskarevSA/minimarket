@@ -22,7 +22,7 @@ type Balance struct {
 type Outbox struct {
 	Id        int64
 	Event     string
-	Status    interface{}
+	Status    string
 	Payload   []byte
 	CreatedAt pgtype.Timestamp
 	CreatedBy string

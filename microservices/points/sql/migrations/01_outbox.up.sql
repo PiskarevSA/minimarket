@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS outbox (
     id BIGSERIAL NOT NULL,
     event VARCHAR(64) NOT NULL,
-    status outbox_status NOT NULL DEFAULT 'UNPROCESSED',
+    status VARCHAR(16) NOT NULL DEFAULT 'UNPROCESSED',
     payload JSONB NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by VARCHAR(32) NOT NULL,

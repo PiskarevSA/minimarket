@@ -10,6 +10,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v3"
+
+	pointscli "github.com/PiskarevSA/minimarket/microservices/points/cli"
 )
 
 func main() {
@@ -34,10 +36,10 @@ func main() {
 	defer stop()
 
 	rootCli := cli.Command{
-		Name:     "minimarket",
-		Version:  "1.0.0",
+		Name:    "minimarket",
+		Version: "1.0.0",
 		Commands: []*cli.Command{
-			// authcli.Cli,
+			pointscli.Cli,
 		},
 	}
 

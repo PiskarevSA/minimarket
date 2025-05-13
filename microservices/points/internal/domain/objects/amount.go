@@ -38,7 +38,7 @@ func NewAmount[T string | pgtype.Numeric](value T) (Amount, error) {
 		return Amount{}, ErrInvaliAmountType
 	}
 
-	if dec.LessThanOrEqual(decimal.Zero) {
+	if dec.LessThan(decimal.Zero) {
 		return Amount{}, ErrInvaliAmount
 	}
 

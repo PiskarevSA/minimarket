@@ -34,7 +34,7 @@ func NewBalance[AmountT string | pgtype.Numeric](
 
 	balance.withdrawn, err = objects.NewAmount(withdrawn)
 	if err != nil {
-		return Balance{}, nil
+		return Balance{}, err
 	}
 
 	balance.userId = userId
