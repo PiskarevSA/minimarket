@@ -1,0 +1,14 @@
+version: '3.0'
+
+tasks:
+  run:codegen:
+    desc: |
+      Run sqlc to convert SQL queries into type-safe Go code. This command
+      will generate Go models, query functions, and database interfaces.
+    cmds:
+      - docker run --rm --user "$(id -u):$(id -g)" 
+        --name mockery-$(openssl rand -hex 4)
+        -v '{{ .ROOT }}':/src
+        -v '{{ .ROOT }}/.mockery.yaml':/src/.mockery.yaml
+        -w /src
+        vektra/mockery:3.2

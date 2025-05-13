@@ -3,9 +3,8 @@ template: matryer
 all: true
 recursive: true
 exclude-subpkg-regex:
-- pkg
-- oapi$
-- sqlc
+  - gen
+  - pkg
 
 packages:
   github.com/PiskarevSA/minimarket:

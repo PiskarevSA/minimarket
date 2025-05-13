@@ -1,0 +1,17 @@
+version: '3.0'
+
+tasks:
+  run:codegen:
+    dir: '{{ .DIR }}'
+    desc: |
+      Run sqlc to convert SQL queries into type-safe Go code. This command
+      will generate Go models, query functions, and database interfaces.
+    cmds:
+      - mkdir -p internal/gen
+      - docker run --rm --user "$(id -u):$(id -g)" 
+        --name sqlc-$(openssl rand -hex 4)
+        -v ./internal/gen:/src/internal/gen
+        -v ./sql:/src/sql
+        -v '{{ .ROOT }}/.sqlc.yaml':/src/sqlc.yaml
+        -w /src
+        sqlc/sqlc:1.29.0 generate

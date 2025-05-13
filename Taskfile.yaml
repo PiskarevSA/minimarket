@@ -1,71 +1,34 @@
 version: '3.0'
 
 includes:
-  oapi-codegen:
-    taskfile: taskfiles/OapiCodegen.yaml
+  mockery:
+    taskfile: taskfiles/Mockery.yaml
     internal: true
 
-  sqlc-codegen:
-    taskfile: taskfiles/SqlcCodegen.yaml
-    internal: true
-
-  mockery-codegen:
-    taskfile: taskfiles/MockeryCodegen.yaml
-    internal: true
-
-  golangci-lint:
-    taskfile: taskfiles/GolangciLint.yaml
+  sqlc:
+    taskfile: taskfiles/Sqlc.yaml
     internal: true
 
 vars:
+  ROOT:
+    sh: pwd
+
   MICROSERVICES:
-    sh: ls microservices*/
+    sh: ls microservices/
 
 tasks:
-  generate:oapi:*:
-    desc: |
-      Run the full oapi-codegen pipeline for a single microservice.
-      This task will only execute for the directory specified by the argument
-      (e.g. `task generate:oapi:auth` runs only for `microservices/auth`).
+  generate:sqlc:
     cmds:
-    - task: oapi-codegen:run
-      vars:
-        DIR: "microservices/{{index .MATCH 0}}"
+      - for: { var: MICROSERVICES, as: MICROSERVICE }
+        vars:
+          ROOT: "{{ .ROOT }}"
+          DIR: "microservices/{{ .MICROSERVICE }}"
+        task: sqlc:run:codegen
 
-  generate:oapi:all:
-    desc: |
-      Run the full oapi-codegen pipeline for every microservice.
-      This task iterates over all subdirectories under `microservices`
-      and invokes code generation for each one.
+  generate:mockery:
     cmds:
-    - for: { var: MICROSERVICES, as: MICROSERVICE }
-      task: oapi-codegen:run
-      vars:
-        DIR: "microservices/{{ .MICROSERVICE }}"
-
-  generate:sqlc:all:
-    desc: |
-      Run the sqlc code generation pipeline for every microservice.
-      This task iterates over all subdirectories under `microservices`,
-      converting SQL queries into type-safe Go code, including models,
-      query functions, and database interfaces for each microservice.
-    cmds:
-    - for: { var: MICROSERVICES, as: MICROSERVICE }
-      task: sqlc-codegen:run
-      vars:
-        DIR: "microservices/{{ .MICROSERVICE }}"
-
-  generate:mockery:all:
-    desc: |
-      Run the Mockery code generation pipeline for every microservice.
-      This task iterates over all subdirectories under `microservices`,
-      generating type-safe mock implementations for Go interfaces used
-      in testing for each microservice.
-    cmds:
-    - task: mockery-codegen:run
-
-  lint:golangci-lint:all:
-    desc: |
-      Run golangci-lint with local config
-    cmds:
-    - task: golangci-lint:run
+      - for: { var: MICROSERVICES, as: MICROSERVICE }
+        vars:
+          ROOT: "{{ .ROOT }}"
+          DIR: "microservices/{{ .MICROSERVICE }}"
+        task: mockery:run:codegen
