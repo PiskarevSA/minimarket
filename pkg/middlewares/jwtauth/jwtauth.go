@@ -12,20 +12,19 @@ type (
 )
 
 type JwtAuth struct {
-	Alg          jwt.SigningMethod
-	SignKey      any
-	VerifyKey    any
-	ParseFn      ParseFn
-	ValidatorFns []ValidatorFn
+	SigningMethod jwt.SigningMethod
+	SigningKey    any
+	Claims        func() jwt.Claims
+	ParseFn       ParseFn
+	ValidatorFns  []ValidatorFn
 }
 
-func New(secretKey any, opts ...Option) *JwtAuth {
+func New(signingKey any, opts ...Option) *JwtAuth {
 	ja := &JwtAuth{
-		Alg:          DefaultAlg,
-		SignKey:      secretKey,
-		VerifyKey:    secretKey,
-		ParseFn:      DefaultParseFn,
-		ValidatorFns: make([]ValidatorFn, 0),
+		SigningMethod: DefaultSigningMethod,
+		SigningKey:    signingKey,
+		ParseFn:       DefaultParseFn,
+		ValidatorFns:  make([]ValidatorFn, 0),
 	}
 
 	for _, opt := range opts {

@@ -1,0 +1,25 @@
+type: object
+properties:
+  code:
+    description: Уникальный код ошибки валидацииы
+    type: string
+    enum:
+      - V1000 # invalid json format
+      - V1012 # invalid integer
+      - V1042 # invalid login format
+      - V1078 # invalid password format
+      - V1107 # invalid order number
+    example: V1042
+  field:
+    description: Имя поля с данными неверного формата 
+    example: userId
+    type: string
+  message:
+    description: Человеко‑читаемое сообщение об ошибке
+    example: must be in uuid
+    type: string
+required:
+  - code
+  - field
+  - message
+x-go-name: ValidationErrorResponse

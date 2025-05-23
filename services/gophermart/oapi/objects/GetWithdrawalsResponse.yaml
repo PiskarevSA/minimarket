@@ -1,0 +1,27 @@
+type: array
+minItems: 0
+items:
+  type: object
+  properties:
+    order:
+      description: Номер заказа за который был списан баланс
+      example: "2377225624"
+      type: string
+      minLength: 10
+      maxLength: 10
+    sum:
+      description: Сумма списанного баланса
+      example: "751"
+      type: string
+      format: decimal
+      minimum: 1
+    processed_at:
+      description: Дата и время списания баланса
+      example: 2020-02-12T07:20:50.52Z
+      type: string
+      format: date-time
+  required:
+    - order
+    - sum
+    - description
+x-go-name: GetWithdrawalsResponse

@@ -1,3 +1,4 @@
+
 template: matryer
 
 all: true
@@ -8,4 +9,5 @@ exclude-subpkg-regex:
 - sqlc
 
 packages:
-  github.com/PiskarevSA/minimarket:
+  github.com/mtchuikov/gophermart:
+  

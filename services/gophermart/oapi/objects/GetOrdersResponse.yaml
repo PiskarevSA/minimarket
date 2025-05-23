@@ -1,0 +1,37 @@
+type: array
+minItems: 0
+items:
+  type: object
+  properties:
+    number:
+      description: Номер заказа
+      example: "2377225624"
+      type: string
+      minLength: 12
+      maxLength: 12
+    status:
+      description: Статус заказа
+      example: PROCESSED
+      type: string
+      enum:
+        - NEW
+        - PROCESSING
+        - INVALID
+        - PROCESSED
+    accrual:
+      description: Количество начисленных бонусов
+      example: "751"
+      type: string
+      format: decimal
+      minimum: 0
+    uploadedAt:
+      description: Дата и время загрузки заказа
+      example: 2020-02-12T07:20:50.52Z
+      type: string
+      format: date-time
+  required:
+    - number
+    - status
+    - accrual
+    - uploadedAt
+x-go-name: GetOrders

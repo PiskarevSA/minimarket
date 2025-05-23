@@ -2,17 +2,11 @@ package jwtauth
 
 import "errors"
 
-const (
-	ErrMsgInvalidAlgo   = "algorithm mismatch"
-	ErrMsgInvalidGoType = "invalid go type"
-	ErrMsgNoTokenFound  = "no token found"
-	ErrMsgExpired       = "token expired"
-	ErrMsgNBFInvalid    = "token nbf validation failed"
-	ErrMsgIATInvalid    = "token iat validation failed"
-	ErrMsgUnauthorized  = "token unauthorized"
-)
-
 var (
-	ErrInvalidAlgo   = errors.New(ErrMsgInvalidAlgo)
-	ErrInvalidGoType = errors.New(ErrMsgInvalidGoType)
+	ErrMissingJwt               = errors.New("missing jwt")
+	ErrInvalidJwt               = errors.New("invalid jwt")
+	ErrJwtNotYetValid           = errors.New("jwt not yet valid")
+	ErrJwtExpired               = errors.New("jwt expired")
+	ErrFailedToParseJwt         = errors.New("failed to parse jwt")
+	ErrUnsupportedSigningMethod = errors.New("unsupported signing method")
 )

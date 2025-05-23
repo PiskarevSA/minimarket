@@ -1,0 +1,38 @@
+operationId: register
+description: Регистрация пользователя
+tags:
+  - Auth
+requestBody:
+  description: Данные для регистрации
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: ../objects/RegisterRequest.yaml
+responses:
+  "200":
+    description: Регистрация выполнена
+    headers:
+      Authorization:
+        description: JWT для авторизации
+        schema:
+          type: string
+          example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  "400":
+    description: Предоставлены данные неправильного формата
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/ValidationError.yaml
+  "409":
+    description: Нарушены бизнес-правила - логи уже занят
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/DomainError.yaml
+  "500":
+    description: Внутренняя ошибка сервера
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/InternalServerError.yaml

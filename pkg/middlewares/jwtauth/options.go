@@ -4,21 +4,21 @@ import "github.com/golang-jwt/jwt/v5"
 
 type Option func(*JwtAuth)
 
-func WithAlg(alg jwt.SigningMethod) Option {
+func WitSigningMethod(method jwt.SigningMethod) Option {
 	return func(a *JwtAuth) {
-		a.Alg = alg
+		a.SigningMethod = method
 	}
 }
 
-func WithSignKey(key any) Option {
+func WithSigningKey(signingKey any) Option {
 	return func(a *JwtAuth) {
-		a.SignKey = key
+		a.SigningKey = signingKey
 	}
 }
 
-func WithVerifyKey(key any) Option {
-	return func(a *JwtAuth) {
-		a.VerifyKey = key
+func WithClaims(f func() jwt.Claims) Option {
+	return func(o *JwtAuth) {
+		o.Claims = f
 	}
 }
 

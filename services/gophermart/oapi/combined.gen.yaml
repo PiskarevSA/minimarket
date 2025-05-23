@@ -1,0 +1,509 @@
+openapi: 3.0.0
+info:
+  title: API Gophermart
+  version: 1.0.0
+  description: ' '
+  contact:
+    name: ООО "Минимаркет"
+    email: minimarket@admin.com
+    url: https://github.com/PiskarevSA/minimarket
+servers:
+  - url: http://127.0.0.1:8616
+    description: Локальный сервер для тестов
+tags:
+  - name: Auth
+  - name: Balance
+  - name: Orders
+paths:
+  /api/user/register:
+    post:
+      operationId: register
+      description: Регистрация пользователя
+      tags:
+        - Auth
+      requestBody:
+        description: Данные для регистрации
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Регистрация выполнена
+          headers:
+            Authorization:
+              description: JWT для авторизации
+              schema:
+                type: string
+                example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Предоставлены данные неправильного формата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Нарушены бизнес-правила - логи уже занят
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /api/user/login:
+    post:
+      operationId: login
+      description: Вход пользователя в систему
+      tags:
+        - Auth
+      requestBody:
+        description: Данные для входа
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Регистрация выполнена
+          headers:
+            Authorization:
+              description: JWT для авторизации
+              schema:
+                type: string
+                example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Предоставлены данные неправильного формата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Нарушены бизнес-правила - неправильный логин или пароль
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /api/user/orders:
+    get:
+      operationId: getOrders
+      description: Получение ордеров
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: offset
+          in: query
+          description: Смещение, от которого начинается выборка записей
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+            example: 12
+            x-go-type: int32
+        - name: limit
+          in: query
+          description: Максимальное число ордеров в ответе
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 35
+            default: 10
+            example: 20
+            x-go-type: int32
+      responses:
+        '200':
+          description: Ордеры получены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrdersResponse'
+        '204':
+          description: Ордеры не найдены
+        '401':
+          description: Пользователь не аутентифицирован
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    post:
+      operationId: uploadOrderNumber
+      description: Загрузка номера заказа
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        description: Данные для регистрации
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Номер заказа за который были списаны бонусы
+              example: '2377225624'
+              type: string
+              minLength: 12
+              maxLength: 12
+      responses:
+        '200':
+          description: Номер заказа уже был загружен пользователем
+        '202':
+          description: Новый номер заказа принят в обработку
+        '400':
+          description: Предоставлены данные неправильного формата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Пользователь не аутентифицирован
+        '409':
+          description: Номер заказа уже был загружен другим пользователем
+        '422':
+          description: Неверный формат номера заказа
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /api/user/balance:
+    get:
+      operationId: getBalance
+      description: Получение баланса
+      tags:
+        - Balance
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Баланс получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBalanceResponse'
+        '401':
+          description: Пользователь не аутентифицирован
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /api/user/balance/withdraw:
+    post:
+      operationId: withdraw
+      description: Списание баланса
+      tags:
+        - Balance
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawRequest'
+      responses:
+        '200':
+          description: Баланс успешно списан
+        '400':
+          description: Предоставлены данные неправильного формата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Пользователь не аутентифицирован
+        '402':
+          description: Нарушены бизнес-правила - недостаточно средств
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainError'
+        '422':
+          description: Нарушены бизнес-правила - номер заказа не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /api/user/withdrawals:
+    get:
+      operationId: getWithdrawals
+      description: Получение операций по списанию бонусов
+      tags:
+        - Balance
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: offset
+          in: query
+          description: Смещение, от которого начинается выборка записей
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+            example: 0
+            x-go-type: int32
+        - name: limit
+          in: query
+          description: Максимальное число операций списания бонусов в ответе
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 35
+            default: 10
+            example: 20
+            x-go-type: int32
+      responses:
+        '200':
+          description: Операции списания получены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWithdrawalsResponse'
+        '204':
+          description: Списания не найдены
+        '401':
+          description: Пользователь не аутентифицирован
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        login:
+          description: Логин пользователя
+          example: sannt
+          type: string
+          minLength: 5
+          maxLength: 24
+        password:
+          description: Пароль пользователя
+          example: n9PCfuyJ5JhhkdTc4eWtoxuJ
+          type: string
+          minLength: 8
+          maxLength: 32
+      required:
+        - login
+        - password
+      x-go-name: RegisterRequest
+    ValidationError:
+      type: object
+      properties:
+        code:
+          description: Уникальный код ошибки валидацииы
+          type: string
+          enum:
+            - V1042
+            - V1078
+          example: V1042
+        field:
+          description: Имя поля с данными неверного формата
+          example: userId
+          type: string
+        message:
+          description: Человеко‑читаемое сообщение об ошибке
+          example: must be in uuid
+          type: string
+      required:
+        - code
+        - field
+        - message
+      x-go-name: ValidationErrorResponse
+    DomainError:
+      type: object
+      properties:
+        code:
+          description: Уникальный код доменной ошибки
+          example: D1002
+          type: string
+          enum:
+            - D1002
+            - D1126
+        message:
+          description: Человеко‑читаемое сообщение об ошибке
+          example: login already in use
+          type: string
+      required:
+        - code
+        - message
+      x-go-name: DomainErrorResponse
+    InternalServerError:
+      type: object
+      properties:
+        code:
+          description: Уникальный код серверной ошибки
+          type: string
+          enum:
+            - S1394
+        message:
+          description: Человеко‑читаемое сообщение об ошибке
+          type: string
+          enum:
+            - internal error
+      required:
+        - code
+        - message
+      x-go-name: InternalServerErrorResponse
+    LoginRequest:
+      type: object
+      properties:
+        login:
+          description: Логин пользователя
+          example: sannt
+          type: string
+          minLength: 5
+          maxLength: 24
+        password:
+          description: Пароль пользователя
+          example: n9PCfuyJ5JhhkdTc4eWtoxuJ
+          type: string
+          minLength: 8
+          maxLength: 32
+      required:
+        - login
+        - password
+      x-go-name: LoginRequest
+    GetOrdersResponse:
+      type: array
+      minItems: 0
+      items:
+        type: object
+        properties:
+          number:
+            description: Номер заказа
+            example: '2377225624'
+            type: string
+            minLength: 12
+            maxLength: 12
+          status:
+            description: Статус заказа
+            example: PROCESSED
+            type: string
+            enum:
+              - NEW
+              - PROCESSING
+              - INVALID
+              - PROCESSED
+          accrual:
+            description: Количество начисленных бонусов
+            example: '751'
+            type: string
+            format: decimal
+            minimum: 0
+          uploadedAt:
+            description: Дата и время загрузки заказа
+            example: '2020-02-12T07:20:50.52Z'
+            type: string
+            format: date-time
+        required:
+          - number
+          - status
+          - accrual
+          - uploadedAt
+      x-go-name: GetOrders
+    GetBalanceResponse:
+      type: object
+      properties:
+        current:
+          description: Баланс доступный для траты
+          example: '500.532'
+          type: string
+          format: decimal
+          minimum: 0
+        withdrawn:
+          description: Общая сумма потраченного баланса
+          example: '42.1'
+          type: string
+          format: decimal
+          minimum: 0
+      required:
+        - available
+        - withdrawn
+      x-go-name: GetBalanceResponse
+    WithdrawRequest:
+      type: object
+      properties:
+        order:
+          description: Номер заказа за который будут списаны бонусы
+          example: '2377225624'
+          type: string
+          minLength: 12
+          maxLength: 12
+        sum:
+          description: Сумма бонусов к списанию
+          example: '751'
+          type: string
+          format: decimal
+          minimum: 1
+      required:
+        - orderNumber
+        - amount
+      x-go-name: WithdrawRequest
+    GetWithdrawalsResponse:
+      type: array
+      minItems: 0
+      items:
+        type: object
+        properties:
+          order:
+            description: Номер заказа за который был списан баланс
+            example: '2377225624'
+            type: string
+            minLength: 10
+            maxLength: 10
+          sum:
+            description: Сумма списанного баланса
+            example: '751'
+            type: string
+            format: decimal
+            minimum: 1
+          processed_at:
+            description: Дата и время списания баланса
+            example: '2020-02-12T07:20:50.52Z'
+            type: string
+            format: date-time
+        required:
+          - order
+          - sum
+          - description
+      x-go-name: GetWithdrawalsResponse

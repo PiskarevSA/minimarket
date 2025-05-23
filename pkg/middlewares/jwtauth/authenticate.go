@@ -1,22 +1,73 @@
 package jwtauth
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
+	"github.com/github.com/PiskarevSA/minimarket/pkg/ctxkey"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func parseErrorToMsg(err error) string {
-	if errors.Is(err, jwt.ErrTokenExpired) {
-		return ErrMsgExpired
+var JwtCtxKey = ctxkey.New("jwtauth.jwt", &jwt.Token{})
+
+func parseTokenString(
+	ctx context.Context,
+	ja *JwtAuth,
+	tokenString string,
+) (*jwt.Token, error) {
+	var (
+		token *jwt.Token
+		err   error
+	)
+
+	if ja.Claims != nil {
+		token, err = jwt.ParseWithClaims(
+			tokenString,
+			ja.Claims(),
+			ja.ParseFn(ctx, ja),
+		)
+	} else {
+		token, err = jwt.Parse(tokenString, ja.ParseFn(ctx, ja))
 	}
 
-	if errors.Is(err, jwt.ErrTokenNotValidYet) {
-		return ErrMsgNBFInvalid
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenMalformed) ||
+			errors.Is(err, jwt.ErrTokenUnverifiable) {
+			return nil, ErrInvalidJwt
+		}
+
+		if errors.Is(err, jwt.ErrTokenNotValidYet) {
+			return nil, ErrJwtNotYetValid
+		}
+
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, ErrJwtExpired
+		}
+
+		return nil, ErrFailedToParseJwt
 	}
 
-	return ErrMsgUnauthorized
+	return token, nil
+}
+
+func validateToken(ctx context.Context, ja *JwtAuth, token *jwt.Token) error {
+	if !token.Valid {
+		return ErrInvalidJwt
+	}
+
+	if token.Method != ja.SigningMethod {
+		return ErrUnsupportedSigningMethod
+	}
+
+	for _, validator := range ja.ValidatorFns {
+		err := validator(ctx, token)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func Authenticate(
@@ -24,45 +75,36 @@ func Authenticate(
 	extractor Extractor,
 ) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		hfn := func(rw http.ResponseWriter, req *http.Request) {
+		fn := func(rw http.ResponseWriter, req *http.Request) {
 			tokenString := extractor(req)
 			if tokenString == "" {
-				http.Error(rw, ErrMsgNoTokenFound, http.StatusUnauthorized)
+				http.Error(rw, ErrMissingJwt.Error(), http.StatusUnauthorized)
 
 				return
 			}
 
 			ctx := req.Context()
 
-			token, err := jwt.Parse(tokenString, ja.ParseFn(ctx, ja))
+			token, err := parseTokenString(ctx, ja, tokenString)
 			if err != nil {
-				msg := parseErrorToMsg(err)
-				http.Error(rw, msg, http.StatusUnauthorized)
+				http.Error(rw, err.Error(), http.StatusUnauthorized)
 
 				return
 			}
 
-			if !token.Valid {
-				http.Error(rw, ErrMsgUnauthorized, http.StatusUnauthorized)
+			err = validateToken(ctx, ja, token)
+			if err != nil {
+				http.Error(rw, err.Error(), http.StatusUnauthorized)
 
 				return
 			}
 
-			for _, validator := range ja.ValidatorFns {
-				err := validator(ctx, token)
-				if err != nil {
-					http.Error(rw, err.Error(), http.StatusUnauthorized)
-
-					return
-				}
-			}
-
-			ctx = PassTokenToContext(ctx, token, nil)
+			ctx = JwtCtxKey.WithValue(ctx, token)
 			req = req.WithContext(ctx)
 
 			next.ServeHTTP(rw, req)
 		}
 
-		return http.HandlerFunc(hfn)
+		return http.HandlerFunc(fn)
 	}
 }

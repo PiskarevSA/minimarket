@@ -7,14 +7,10 @@ import (
 )
 
 var (
-	DefaultAlg     = jwt.SigningMethodHS256
-	DefaultParseFn = func(ctx context.Context, ja *JwtAuth) jwt.Keyfunc {
+	DefaultSigningMethod = jwt.SigningMethodHS256
+	DefaultParseFn       = func(ctx context.Context, ja *JwtAuth) jwt.Keyfunc {
 		return func(t *jwt.Token) (any, error) {
-			if t.Method.Alg() != ja.Alg.Alg() {
-				return nil, ErrInvalidAlgo
-			}
-
-			return ja.VerifyKey, nil
+			return ja.SigningKey, nil
 		}
 	}
 )
