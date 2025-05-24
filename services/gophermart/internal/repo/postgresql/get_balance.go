@@ -13,11 +13,11 @@ import (
 
 func (r *PostgreSql) GetBalanceByUserId(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 ) (current, withdrawn objects.Amount, err error) {
-	userUuid := userId.Uuid()
+	userUUID := userId.UUID()
 
-	row, err := r.querier.GetBalanceByUserId(ctx, userUuid)
+	row, err := r.querier.GetBalanceByUserId(ctx, userUUID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = repo.ErrNoBalanceFound
@@ -26,7 +26,7 @@ func (r *PostgreSql) GetBalanceByUserId(
 		return objects.NullAmount, objects.NullAmount, err
 	}
 
-	current, withdrawn = dto.GetBalanceByUserIdToBalance(row)
+	current, withdrawn = dto.GetBalanceByUserIDToBalance(row)
 
 	return current, withdrawn, err
 }

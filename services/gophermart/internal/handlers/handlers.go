@@ -24,7 +24,7 @@ var getJwtFromContext = func(ctx context.Context, op string) (token *jwt.Token, 
 	return token, true
 }
 
-var getUserIdFromJwt = func(token *jwt.Token, op string) (userId uuid.UUID, ok bool) {
+var getUserIDFromJwt = func(token *jwt.Token, op string) (userId uuid.UUID, ok bool) {
 	sub, err := token.Claims.GetSubject()
 	if err != nil {
 		log.Error().

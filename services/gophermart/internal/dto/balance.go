@@ -6,7 +6,7 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/gen/sqlc/postgresql"
 )
 
-func GetBalanceByUserIdToBalance(
+func GetBalanceByUserIDToBalance(
 	row postgresql.GetBalanceByUserIdRow,
 ) (current, withdrawn objects.Amount) {
 	dec, _ := convtype.NumericToDecimal(row.Current)

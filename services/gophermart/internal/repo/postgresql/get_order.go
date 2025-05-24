@@ -23,14 +23,14 @@ func (r *PostgreSql) GetOrderByNumber(
 
 func (r *PostgreSql) GetOrdersByUserId(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 	offset,
 	limit int32,
 ) (orders []entities.Order, err error) {
 	rows, err := r.querier.GetOrdersByUserId(
 		ctx,
 		postgresql.GetOrdersByUserIdParams{
-			UserId: userId.Uuid(),
+			UserId: userId.UUID(),
 			Offset: convtype.Int32ToInt4(offset),
 			Limit:  convtype.Int32ToInt4(limit),
 		},
@@ -43,7 +43,7 @@ func (r *PostgreSql) GetOrdersByUserId(
 		return entities.NullOrders, err
 	}
 
-	orders = dto.GetOrdersByUserIdToOrders(userId, rows)
+	orders = dto.GetOrdersByUserIDToOrders(userId, rows)
 
 	return orders, err
 }

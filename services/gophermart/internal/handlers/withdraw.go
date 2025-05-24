@@ -15,7 +15,7 @@ import (
 type WithdrawUsecase interface {
 	Do(
 		ctx context.Context,
-		userId uuid.UUID,
+		userID uuid.UUID,
 		orderNumber,
 		sum string,
 	) error
@@ -50,7 +50,7 @@ func (h *Withdraw) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	userId, ok := getUserIdFromJwt(token, "withdraw")
+	userID, ok := getUserIDFromJwt(token, "withdraw")
 	if !ok {
 		writeInternalServerError(rw)
 
@@ -74,7 +74,7 @@ func (h *Withdraw) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = h.usecase.Do(ctx, userId, reqData.Order, reqData.Sum)
+	err = h.usecase.Do(ctx, userID, reqData.Order, reqData.Sum)
 	if err != nil {
 		{
 			var e *usecases.ValidationError

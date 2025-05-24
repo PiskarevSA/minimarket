@@ -11,7 +11,7 @@ import (
 
 type Order struct {
 	number     objects.OrderNumber
-	userId     objects.UserId
+	userID     objects.UserID
 	status     objects.OrderStatus
 	accrual    objects.Amount
 	uploadedAt time.Time
@@ -24,7 +24,7 @@ var (
 
 func NewOrder(
 	number string,
-	userId uuid.UUID,
+	userID uuid.UUID,
 	status string,
 	accrual string,
 	uploadedAt time.Time,
@@ -49,7 +49,7 @@ func NewOrder(
 		return NullOrder, err
 	}
 
-	o.userId = objects.NewUserId(userId)
+	o.userID = objects.NewUserID(userID)
 	o.uploadedAt = uploadedAt
 
 	return o, nil
@@ -59,8 +59,8 @@ func (o Order) Number() objects.OrderNumber {
 	return o.number
 }
 
-func (o Order) UserId() objects.UserId {
-	return o.userId
+func (o Order) UserID() objects.UserID {
+	return o.userID
 }
 
 func (o Order) Status() objects.OrderStatus {
@@ -85,8 +85,8 @@ func (o *Order) SetNumber(number objects.OrderNumber) {
 	o.number = number
 }
 
-func (o *Order) SetUserId(userId objects.UserId) {
-	o.userId = userId
+func (o *Order) SetUserID(userID objects.UserID) {
+	o.userID = userID
 }
 
 func (o *Order) SetStatus(status objects.OrderStatus) {
@@ -105,8 +105,8 @@ func (o Order) EqualNumber(other Order) bool {
 	return o.number.Equal(other.number)
 }
 
-func (o Order) EqualUserId(other Order) bool {
-	return o.userId == other.userId
+func (o Order) EqualUserID(other Order) bool {
+	return o.userID == other.userID
 }
 
 func (o Order) EqualStatus(other Order) bool {

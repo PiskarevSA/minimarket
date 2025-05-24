@@ -7,15 +7,15 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/gen/sqlc/postgresql"
 )
 
-func GetTxsByUserIdToTxs(
-	userId objects.UserId,
+func GetTxsByUserIDToTxs(
+	userID objects.UserID,
 	rows []postgresql.GetTransactionsByUserIdRow,
 ) []entities.Transaction {
 	txs := make([]entities.Transaction, len(rows))
 
 	for i, row := range rows {
-		txs[i].SetId(row.Id)
-		txs[i].SetUserId(userId)
+		txs[i].SetID(row.Id)
+		txs[i].SetUserID(userID)
 
 		orderNumber := objects.OrderNumber(row.OrderNumber)
 		txs[i].SetOrderNumber(orderNumber)

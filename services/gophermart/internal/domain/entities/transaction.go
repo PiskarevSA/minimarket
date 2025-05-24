@@ -10,7 +10,7 @@ import (
 
 type Transaction struct {
 	id           int32
-	userId       objects.UserId
+	userID       objects.UserID
 	orderNumber  objects.OrderNumber
 	sum          objects.Amount
 	opetaion     objects.Operation
@@ -24,7 +24,7 @@ var (
 
 func NewTransaction(
 	id int32,
-	userId uuid.UUID,
+	userID uuid.UUID,
 	orderNum string,
 	sum string,
 	operation string,
@@ -51,18 +51,18 @@ func NewTransaction(
 	}
 
 	tx.id = id
-	tx.userId = objects.NewUserId(userId)
+	tx.userID = objects.NewUserID(userID)
 	tx.proccessedAt = processedAt
 
 	return tx, nil
 }
 
-func (t Transaction) Id() int32 {
+func (t Transaction) ID() int32 {
 	return t.id
 }
 
-func (t Transaction) UserId() objects.UserId {
-	return t.userId
+func (t Transaction) UserID() objects.UserID {
+	return t.userID
 }
 
 func (t Transaction) OrderNumber() objects.OrderNumber {
@@ -81,12 +81,12 @@ func (t Transaction) ProcessedAt() time.Time {
 	return t.proccessedAt
 }
 
-func (t *Transaction) SetId(id int32) {
+func (t *Transaction) SetID(id int32) {
 	t.id = id
 }
 
-func (t *Transaction) SetUserId(userId objects.UserId) {
-	t.userId = userId
+func (t *Transaction) SetUserID(userID objects.UserID) {
+	t.userID = userID
 }
 
 func (t *Transaction) SetOrderNumber(orderNumber objects.OrderNumber) {

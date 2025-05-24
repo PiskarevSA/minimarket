@@ -55,10 +55,10 @@ func (u *Login) Do(
 		return "", err
 	}
 
-	rawUserId := account.Id().Uuid()
+	rawUserID := account.ID().UUID()
 	now := time.Now()
 
-	token, err = u.idp.IssueToken(rawUserId, now)
+	token, err = u.idp.IssueToken(rawUserID, now)
 	if err != nil {
 		log.Error().
 			Err(err).

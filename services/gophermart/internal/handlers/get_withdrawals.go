@@ -16,7 +16,7 @@ import (
 type GetWithdrawalsUsecase interface {
 	Do(
 		ctx context.Context,
-		userId uuid.UUID,
+		userID uuid.UUID,
 		offset, limit int32,
 	) (txs []entities.Transaction, err error)
 }
@@ -53,7 +53,7 @@ func (h *GetWithdrawals) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	userId, ok := getUserIdFromJwt(token, op)
+	userID, ok := getUserIDFromJwt(token, op)
 	if !ok {
 		writeInternalServerError(rw)
 
@@ -65,7 +65,7 @@ func (h *GetWithdrawals) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	withdrawals, err := h.usecase.Do(ctx, userId, offset, limit)
+	withdrawals, err := h.usecase.Do(ctx, userID, offset, limit)
 	if err != nil {
 		writeInternalServerError(rw)
 

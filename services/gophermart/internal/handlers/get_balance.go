@@ -14,7 +14,7 @@ import (
 type GetBalanceUsecase interface {
 	Do(
 		ctx context.Context,
-		userId uuid.UUID,
+		userID uuid.UUID,
 	) (current, withdrawn objects.Amount, err error)
 }
 
@@ -47,14 +47,14 @@ func (h *GetBalance) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	userId, ok := getUserIdFromJwt(token, op)
+	userID, ok := getUserIDFromJwt(token, op)
 	if !ok {
 		writeInternalServerError(rw)
 
 		return
 	}
 
-	current, withdrawn, err := h.usecase.Do(ctx, userId)
+	current, withdrawn, err := h.usecase.Do(ctx, userID)
 	if err != nil {
 		writeInternalServerError(rw)
 

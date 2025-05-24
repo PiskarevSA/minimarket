@@ -15,7 +15,7 @@ import (
 type UploadOrderNumberUsecase interface {
 	Do(
 		ctx context.Context,
-		userId uuid.UUID,
+		userID uuid.UUID,
 		orderNumber string,
 	) error
 }
@@ -44,7 +44,7 @@ func (h *UploadOrderNumber) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	userId, ok := getUserIdFromJwt(token, op)
+	userID, ok := getUserIDFromJwt(token, op)
 	if !ok {
 		writeInternalServerError(rw)
 
@@ -68,7 +68,7 @@ func (h *UploadOrderNumber) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = h.usecase.Do(ctx, userId, orderNumber)
+	err = h.usecase.Do(ctx, userID, orderNumber)
 	if err != nil {
 		{
 			var e *usecases.ValidationError

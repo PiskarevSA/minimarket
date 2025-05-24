@@ -2,18 +2,18 @@ package objects
 
 import "github.com/google/uuid"
 
-type UserId uuid.UUID
+type UserID uuid.UUID
 
-var NullUserId = UserId(uuid.Nil)
+var NullUserID = UserID(uuid.Nil)
 
-func NewUserId(userId uuid.UUID) UserId {
-	return UserId(userId)
+func NewUserID(userID uuid.UUID) UserID {
+	return UserID(userID)
 }
 
-func (u UserId) Uuid() uuid.UUID {
+func (u UserID) UUID() uuid.UUID {
 	return uuid.UUID(u)
 }
 
-func (u UserId) Equal(userId UserId) bool {
-	return u == userId
+func (u UserID) Equal(userID UserID) bool {
+	return u == userID
 }

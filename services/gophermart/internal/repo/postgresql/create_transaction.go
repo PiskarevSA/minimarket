@@ -21,7 +21,7 @@ func (r *PostgreSql) createTransaction(
 	err := querier.CreateTransaction(
 		ctx,
 		postgresql.CreateTransactionParams{
-			UserId:      tx.UserId().Uuid(),
+			UserId:      tx.UserID().UUID(),
 			OrderNumber: tx.OrderNumber().String(),
 			Operation:   tx.Operation().String(),
 			Sum:         tx.Sum().Numeric(),

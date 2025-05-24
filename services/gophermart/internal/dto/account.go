@@ -6,13 +6,13 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/gen/sqlc/postgresql"
 )
 
-func GetAccountByUserIdToAccount(
-	userId objects.UserId,
+func GetAccountByUserIDToAccount(
+	userID objects.UserID,
 	row postgresql.GetAccountByUserIdRow,
 ) entities.Account {
 	var account entities.Account
 
-	account.SetId(userId)
+	account.SetID(userID)
 
 	login := objects.Login(row.Login)
 	account.SetLogin(login)
@@ -32,8 +32,8 @@ func GetAccountByLoginToAccount(
 ) entities.Account {
 	var account entities.Account
 
-	userId := objects.UserId(row.Id)
-	account.SetId(userId)
+	userID := objects.UserID(row.Id)
+	account.SetID(userID)
 
 	account.SetLogin(login)
 

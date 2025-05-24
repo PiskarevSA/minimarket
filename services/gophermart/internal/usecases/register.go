@@ -48,9 +48,9 @@ func (u *Register) Do(
 	passwordHash := password.Hash()
 
 	account := u.newAccount(login, passwordHash, now)
-	rawUserId := account.Id().Uuid()
+	rawUserID := account.ID().UUID()
 
-	token, err = u.idp.IssueToken(rawUserId, now)
+	token, err = u.idp.IssueToken(rawUserID, now)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -109,9 +109,9 @@ func (u *Register) newAccount(
 ) entities.Account {
 	var account entities.Account
 
-	rawUserId := uuid.New()
-	userId := objects.NewUserId(rawUserId)
-	account.SetId(userId)
+	rawUserID := uuid.New()
+	userID := objects.NewUserID(rawUserID)
+	account.SetID(userID)
 
 	account.SetLogin(login)
 	account.SetPasswordHash(passwordHash)

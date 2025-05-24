@@ -16,7 +16,7 @@ import (
 
 func (r *PostgreSql) getTransactionsByUserId(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 	operation objects.Operation,
 	offset,
 	limit int32,
@@ -24,7 +24,7 @@ func (r *PostgreSql) getTransactionsByUserId(
 	rows, err := r.querier.GetTransactionsByUserId(
 		ctx,
 		postgresql.GetTransactionsByUserIdParams{
-			UserId:    userId.Uuid(),
+			UserId:    userId.UUID(),
 			Operation: operation.String(),
 			Offset:    convtype.Int32ToInt4(offset),
 			Limit:     convtype.Int32ToInt4(limit),
@@ -38,14 +38,14 @@ func (r *PostgreSql) getTransactionsByUserId(
 		return entities.Nullransactions, err
 	}
 
-	txs = dto.GetTxsByUserIdToTxs(userId, rows)
+	txs = dto.GetTxsByUserIDToTxs(userId, rows)
 
 	return txs, nil
 }
 
 func (r *PostgreSql) GetDepositsByUserId(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 	offset,
 	limit int32,
 ) (txs []entities.Transaction, err error) {
@@ -60,7 +60,7 @@ func (r *PostgreSql) GetDepositsByUserId(
 
 func (r *PostgreSql) GetWithdrawalsByUserId(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 	offset,
 	limit int32,
 ) (txs []entities.Transaction, err error) {

@@ -39,7 +39,7 @@ func (u *Withdraw) Do(
 ) error {
 	const op = "withdraw"
 
-	userId := objects.NewUserId(rawUserId)
+	userID := objects.NewUserID(rawUserId)
 
 	orderNumber, sum, err := u.parseInputs(rawOrderNumber, rawSum)
 	if err != nil {
@@ -47,7 +47,7 @@ func (u *Withdraw) Do(
 	}
 
 	now := time.Now()
-	tx := u.newTransaction(orderNumber, userId, sum, now)
+	tx := u.newTransaction(orderNumber, userID, sum, now)
 
 	return u.createWithdraw(ctx, op, tx)
 }
@@ -87,14 +87,14 @@ func (u *Withdraw) parseInputs(
 
 func (u *Withdraw) newTransaction(
 	orderNumber objects.OrderNumber,
-	userId objects.UserId,
+	userId objects.UserID,
 	sum objects.Amount,
 	pocessedAt time.Time,
 ) entities.Transaction {
 	var tx entities.Transaction
 
 	tx.SetOrderNumber(orderNumber)
-	tx.SetUserId(userId)
+	tx.SetUserID(userId)
 
 	tx.SetSum(sum)
 	tx.SetOperation(objects.OperationWithdraw)
@@ -124,7 +124,7 @@ func (u *Withdraw) createWithdraw(
 
 		err = u.storage.CreateOrUpdateBalanceInTx(
 			ctx,
-			tx.UserId(),
+			tx.UserID(),
 			tx.Operation(),
 			tx.Sum(),
 		)

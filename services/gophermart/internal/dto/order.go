@@ -7,8 +7,8 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/gen/sqlc/postgresql"
 )
 
-func GetOrdersByUserIdToOrders(
-	userId objects.UserId,
+func GetOrdersByUserIDToOrders(
+	userID objects.UserID,
 	rows []postgresql.GetOrdersByUserIdRow,
 ) []entities.Order {
 	orders := make([]entities.Order, len(rows))
@@ -17,7 +17,7 @@ func GetOrdersByUserIdToOrders(
 		number := objects.OrderNumber(row.Number)
 		orders[i].SetNumber(number)
 
-		orders[i].SetUserId(userId)
+		orders[i].SetUserID(userID)
 
 		status := objects.OrderStatus(row.Status)
 		orders[i].SetStatus(status)

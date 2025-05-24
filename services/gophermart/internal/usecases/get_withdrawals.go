@@ -15,7 +15,7 @@ import (
 type GetWithdrawalsStorage interface {
 	GetWithdrawalsByUserId(
 		ctx context.Context,
-		userId objects.UserId,
+		userId objects.UserID,
 		offset,
 		limit int32,
 	) ([]entities.Transaction, error)
@@ -36,9 +36,9 @@ func (u *GetWithdrawals) Do(
 ) (txs []entities.Transaction, err error) {
 	const op = "getWithdrawals"
 
-	userId := objects.NewUserId(rawUserId)
+	userID := objects.NewUserID(rawUserId)
 
-	txs, err = u.storage.GetWithdrawalsByUserId(ctx, userId, offset, limit)
+	txs, err = u.storage.GetWithdrawalsByUserId(ctx, userID, offset, limit)
 	if err != nil {
 		if errors.Is(err, repo.ErrNoTransactionsFound) {
 			return entities.Nullransactions, nil

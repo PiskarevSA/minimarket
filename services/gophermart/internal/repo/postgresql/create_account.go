@@ -21,7 +21,7 @@ func (r *PostgreSql) createAccount(
 	err := querier.CreateAccount(
 		ctx,
 		postgresql.CreateAccountParams{
-			Id:           account.Id().Uuid(),
+			Id:           account.ID().UUID(),
 			Login:        account.Login().String(),
 			PasswordHash: string(account.PasswordHash()),
 			CreatedAt:    account.CreatedAt(),

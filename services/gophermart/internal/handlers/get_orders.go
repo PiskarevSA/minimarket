@@ -16,7 +16,7 @@ import (
 type GetOrdersUsecase interface {
 	Do(
 		ctx context.Context,
-		userId uuid.UUID,
+		userID uuid.UUID,
 		offset,
 		limit int32,
 	) (orders []entities.Order, err error)
@@ -55,7 +55,7 @@ func (h *GetOrders) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	userId, ok := getUserIdFromJwt(token, op)
+	userID, ok := getUserIDFromJwt(token, op)
 	if !ok {
 		writeInternalServerError(rw)
 
@@ -67,7 +67,7 @@ func (h *GetOrders) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	orders, err := h.usecase.Do(ctx, userId, offset, limit)
+	orders, err := h.usecase.Do(ctx, userID, offset, limit)
 	if err != nil {
 		writeInternalServerError(rw)
 

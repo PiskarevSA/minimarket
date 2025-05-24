@@ -14,9 +14,9 @@ import (
 
 func (r *PostgreSql) GetAccountByUserId(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 ) (account entities.Account, err error) {
-	row, err := r.querier.GetAccountByUserId(ctx, userId.Uuid())
+	row, err := r.querier.GetAccountByUserId(ctx, userId.UUID())
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = repo.ErrLoginNotExists
@@ -25,7 +25,7 @@ func (r *PostgreSql) GetAccountByUserId(
 		return entities.NullAccount, err
 	}
 
-	account = dto.GetAccountByUserIdToAccount(userId, row)
+	account = dto.GetAccountByUserIDToAccount(userId, row)
 
 	return account, err
 }

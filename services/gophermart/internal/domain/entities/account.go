@@ -9,7 +9,7 @@ import (
 )
 
 type Account struct {
-	id           objects.UserId
+	id           objects.UserID
 	login        objects.Login
 	passwordHash []byte
 	createdAt    time.Time
@@ -35,7 +35,7 @@ func NewAccount(
 		return NullAccount, err
 	}
 
-	a.id = objects.NewUserId(id)
+	a.id = objects.NewUserID(id)
 	a.passwordHash = passwordHash
 	a.createdAt = createdAt
 	a.updatedAt = updatedAt
@@ -43,7 +43,7 @@ func NewAccount(
 	return a, nil
 }
 
-func (a Account) Id() objects.UserId {
+func (a Account) ID() objects.UserID {
 	return a.id
 }
 
@@ -63,7 +63,7 @@ func (a Account) UpdatedAt() time.Time {
 	return a.updatedAt
 }
 
-func (a *Account) SetId(id objects.UserId) {
+func (a *Account) SetID(id objects.UserID) {
 	a.id = id
 }
 

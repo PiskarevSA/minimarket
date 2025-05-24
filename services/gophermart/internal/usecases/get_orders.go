@@ -15,7 +15,7 @@ import (
 type GetOrdersStorage interface {
 	GetOrdersByUserId(
 		ctx context.Context,
-		userId objects.UserId,
+		userId objects.UserID,
 		offset int32,
 		limit int32,
 	) ([]entities.Order, error)
@@ -37,9 +37,9 @@ func (u *GetOrders) Do(
 ) (orders []entities.Order, err error) {
 	const op = "getOrders"
 
-	userId := objects.NewUserId(rawUserId)
+	userID := objects.NewUserID(rawUserId)
 
-	orders, err = u.storage.GetOrdersByUserId(ctx, userId, offset, limit)
+	orders, err = u.storage.GetOrdersByUserId(ctx, userID, offset, limit)
 	if err != nil {
 		if errors.Is(err, repo.ErrNoOrdersFound) {
 			return entities.NullOrders, nil

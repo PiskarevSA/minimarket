@@ -16,14 +16,14 @@ import (
 func (r PostgreSql) createOrUpdateBalance(
 	ctx context.Context,
 	querier *postgresql.Queries,
-	userId objects.UserId,
+	userId objects.UserID,
 	operation objects.Operation,
 	sum objects.Amount,
 ) error {
 	err := querier.CreateOrUpdateBalance(
 		ctx,
 		postgresql.CreateOrUpdateBalanceParams{
-			UserId:    userId.Uuid(),
+			UserId:    userId.UUID(),
 			Operation: operation.String(),
 			Sum:       sum.Numeric(),
 		},
@@ -44,7 +44,7 @@ func (r PostgreSql) createOrUpdateBalance(
 
 func (r *PostgreSql) CreateOrUpdateBalance(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 	operation objects.Operation,
 	sum objects.Amount,
 ) error {
@@ -53,7 +53,7 @@ func (r *PostgreSql) CreateOrUpdateBalance(
 
 func (r *PostgreSql) CreateOrUpdateBalanceInTx(
 	ctx context.Context,
-	userId objects.UserId,
+	userId objects.UserID,
 	operation objects.Operation,
 	sum objects.Amount,
 ) error {

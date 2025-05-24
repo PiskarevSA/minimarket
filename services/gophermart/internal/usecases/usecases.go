@@ -37,7 +37,7 @@ type (
 	BalanceStorage interface {
 		CreateOrUpdateBalanceInTx(
 			ctx context.Context,
-			userId objects.UserId,
+			userId objects.UserID,
 			operation objects.Operation,
 			sum objects.Amount,
 		) error

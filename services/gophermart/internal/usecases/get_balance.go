@@ -14,7 +14,7 @@ import (
 type GetBalanceStorage interface {
 	GetBalanceByUserId(
 		ctx context.Context,
-		userId objects.UserId,
+		userId objects.UserID,
 	) (current, withdrawn objects.Amount, err error)
 }
 
@@ -32,9 +32,9 @@ func (u *GetBalance) Do(
 ) (current, withdrawn objects.Amount, err error) {
 	const op = "getBalance"
 
-	userId := objects.NewUserId(rawUserId)
+	userID := objects.NewUserID(rawUserId)
 
-	current, withdrawn, err = u.storage.GetBalanceByUserId(ctx, userId)
+	current, withdrawn, err = u.storage.GetBalanceByUserId(ctx, userID)
 	if err != nil {
 		if errors.Is(err, repo.ErrNoBalanceFound) {
 			return objects.NullAmount, objects.NullAmount, nil

@@ -19,7 +19,7 @@ func (r *PostgreSql) createOrder(
 		ctx,
 		postgresql.CreateOrderParams{
 			Number:     order.Number().String(),
-			UserId:     order.UserId().Uuid(),
+			UserId:     order.UserID().UUID(),
 			Status:     order.Status().String(),
 			Accrual:    order.Accrual().Numeric(),
 			UploadedAt: order.UploadedAt(),
@@ -30,8 +30,8 @@ func (r *PostgreSql) createOrder(
 	}
 
 	if !row.Inserted {
-		orderCreator := objects.NewUserId(row.UserId)
-		if order.UserId().Equal(orderCreator) {
+		orderCreator := objects.NewUserID(row.UserId)
+		if order.UserID().Equal(orderCreator) {
 			return repo.ErrOrderAlreadyCreatedByUser
 		}
 
