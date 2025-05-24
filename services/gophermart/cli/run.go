@@ -30,15 +30,15 @@ var Run = &cli.Command{
 	Action: func(ctx context.Context, c *cli.Command) error {
 		const serviceName = "auth"
 
-		connUrl := config.Config.Database.ConnUrl()
-		pgxPool, err := pgxpool.New(ctx, connUrl)
+		connURL := config.Config.Database.ConnURL()
+		pgxPool, err := pgxpool.New(ctx, connURL)
 		if err != nil {
 			log.Fatal().
 				Err(err).
 				Msg("failed to parse postgresql conn url")
 		}
 
-		postgreSql := postgresql.New(pgxPool)
+		postgreSQL := postgresql.New(pgxPool)
 		idp := idp.NewIdentityProvider(
 			serviceName,
 			jwt.SigningMethodHS256,
@@ -46,8 +46,8 @@ var Run = &cli.Command{
 			time.Hour,
 		)
 
-		registerUsecase := usecases.NewRegister(postgreSql, idp)
-		loginUsecase := usecases.NewLogin(postgreSql, idp)
+		registerUsecase := usecases.NewRegister(postgreSQL, idp)
+		loginUsecase := usecases.NewLogin(postgreSQL, idp)
 
 		registerHandler := handlers.NewRegister(registerUsecase)
 		loginHandler := handlers.NewLogin(loginUsecase)
@@ -66,15 +66,15 @@ var Run = &cli.Command{
 			authRouter.Use(jwtauth.Authenticate(ja, extractor))
 
 			uploadOrderNumberUsecase := usecases.NewUploadOrderNumber(
-				postgreSql,
+				postgreSQL,
 			)
-			getOrdersUsecase := usecases.NewGetOrders(postgreSql)
-			getBalanceUsecase := usecases.NewGetBalance(postgreSql)
+			getOrdersUsecase := usecases.NewGetOrders(postgreSQL)
+			getBalanceUsecase := usecases.NewGetBalance(postgreSQL)
 			withdrawUsecase := usecases.NewWithdraw(
-				postgreSql,
+				postgreSQL,
 				transactor.New(pgxPool),
 			)
-			getWithdrawalsUsecase := usecases.NewGetWithdrawals(postgreSql)
+			getWithdrawalsUsecase := usecases.NewGetWithdrawals(postgreSQL)
 
 			uploadOrderNumberHandler := handlers.NewUploadOrderNumber(
 				uploadOrderNumberUsecase,

@@ -50,9 +50,9 @@ func IsNoAdditionalDynamicResultSetsReturned(code string) bool {
 	return code == NoAdditionalDynamicResultSetsReturned
 }
 
-// IsSqlStatementNotYetComplete returns true if the code equals "03000".
-func IsSqlStatementNotYetComplete(code string) bool {
-	return code == SqlStatementNotYetComplete
+// IsSQLStatementNotYetComplete returns true if the code equals "03000".
+func IsSQLStatementNotYetComplete(code string) bool {
+	return code == SQLStatementNotYetComplete
 }
 
 // IsConnectionException returns true if the code starts with "08".
@@ -320,9 +320,9 @@ func IsInvalidTransactionState(code string) bool {
 	return code == InvalidTransactionState
 }
 
-// IsActiveSqlTransaction returns true if the code equals "25001".
-func IsActiveSqlTransaction(code string) bool {
-	return code == ActiveSqlTransaction
+// IsActiveSQLTransaction returns true if the code equals "25001".
+func IsActiveSQLTransaction(code string) bool {
+	return code == ActiveSQLTransaction
 }
 
 // IsBranchTransactionAlreadyActive returns true if the code equals "25002".
@@ -345,14 +345,14 @@ func IsInappropriateIsolationLevelForBranchTransaction(code string) bool {
 	return code == InappropriateIsolationLevelForBranchTransaction
 }
 
-// IsNoActiveSqlTransactionForBranchTransaction returns true if the code equals "25006".
-func IsNoActiveSqlTransactionForBranchTransaction(code string) bool {
-	return code == NoActiveSqlTransactionForBranchTransaction
+// IsNoActiveSQLTransactionForBranchTransaction returns true if the code equals "25006".
+func IsNoActiveSQLTransactionForBranchTransaction(code string) bool {
+	return code == NoActiveSQLTransactionForBranchTransaction
 }
 
-// IsReadOnlySqlTransaction returns true if the code equals "25007".
-func IsReadOnlySqlTransaction(code string) bool {
-	return code == ReadOnlySqlTransaction
+// IsReadOnlySQLTransaction returns true if the code equals "25007".
+func IsReadOnlySQLTransaction(code string) bool {
+	return code == ReadOnlySQLTransaction
 }
 
 // IsSchemaAndDataStatementMixingNotSupported returns true if the code equals "25008".
@@ -360,14 +360,14 @@ func IsSchemaAndDataStatementMixingNotSupported(code string) bool {
 	return code == SchemaAndDataStatementMixingNotSupported
 }
 
-// IsNoActiveSqlTransaction returns true if the code equals "25009".
-func IsNoActiveSqlTransaction(code string) bool {
-	return code == NoActiveSqlTransaction
+// IsNoActiveSQLTransaction returns true if the code equals "25009".
+func IsNoActiveSQLTransaction(code string) bool {
+	return code == NoActiveSQLTransaction
 }
 
-// IsInFailedSqlTransaction returns true if the code equals "25010".
-func IsInFailedSqlTransaction(code string) bool {
-	return code == InFailedSqlTransaction
+// IsInFailedSQLTransaction returns true if the code equals "25010".
+func IsInFailedSQLTransaction(code string) bool {
+	return code == InFailedSQLTransaction
 }
 
 // IsIdleInTransactionSessionTimeout returns true if the code equals "25P01".
@@ -405,24 +405,24 @@ func IsInvalidTransactionTermination(code string) bool {
 	return code == InvalidTransactionTermination
 }
 
-// IsSqlRoutineException returns true if the code equals "2F000".
-func IsSqlRoutineException(code string) bool {
-	return code == SqlRoutineException
+// IsSQLRoutineException returns true if the code equals "2F000".
+func IsSQLRoutineException(code string) bool {
+	return code == SQLRoutineException
 }
 
-// IsModifyingSqlDataNotPermitted returns true if the code equals "2F002".
-func IsModifyingSqlDataNotPermitted(code string) bool {
-	return code == ModifyingSqlDataNotPermitted
+// IsModifyingSQLDataNotPermitted returns true if the code equals "2F002".
+func IsModifyingSQLDataNotPermitted(code string) bool {
+	return code == ModifyingSQLDataNotPermitted
 }
 
-// IsProhibitedSqlStatementAttempted returns true if the code equals "2F003".
-func IsProhibitedSqlStatementAttempted(code string) bool {
-	return code == ProhibitedSqlStatementAttempted
+// IsProhibitedSQLStatementAttempted returns true if the code equals "2F003".
+func IsProhibitedSQLStatementAttempted(code string) bool {
+	return code == ProhibitedSQLStatementAttempted
 }
 
-// IsReadingSqlDataNotPermitted returns true if the code equals "2F004".
-func IsReadingSqlDataNotPermitted(code string) bool {
-	return code == ReadingSqlDataNotPermitted
+// IsReadingSQLDataNotPermitted returns true if the code equals "2F004".
+func IsReadingSQLDataNotPermitted(code string) bool {
+	return code == ReadingSQLDataNotPermitted
 }
 
 // IsFunctionExecutedNoReturnStatement returns true if the code equals "2F005".
@@ -440,24 +440,24 @@ func IsExternalRoutineException(code string) bool {
 	return code == ExternalRoutineException
 }
 
-// IsContainingSqlNotPermitted returns true if the code equals "38001".
-func IsContainingSqlNotPermitted(code string) bool {
-	return code == ContainingSqlNotPermitted
+// IsContainingSQLNotPermitted returns true if the code equals "38001".
+func IsContainingSQLNotPermitted(code string) bool {
+	return code == ContainingSQLNotPermitted
 }
 
-// IsModifyingSqlDataNotPermittedExternal returns true if the code equals "38002".
-func IsModifyingSqlDataNotPermittedExternal(code string) bool {
-	return code == ModifyingSqlDataNotPermittedExternal
+// IsModifyingSQLDataNotPermittedExternal returns true if the code equals "38002".
+func IsModifyingSQLDataNotPermittedExternal(code string) bool {
+	return code == ModifyingSQLDataNotPermittedExternal
 }
 
-// IsProhibitedSqlStatementAttemptedExternal returns true if the code equals "38003".
-func IsProhibitedSqlStatementAttemptedExternal(code string) bool {
-	return code == ProhibitedSqlStatementAttemptedExternal
+// IsProhibitedSQLStatementAttemptedExternal returns true if the code equals "38003".
+func IsProhibitedSQLStatementAttemptedExternal(code string) bool {
+	return code == ProhibitedSQLStatementAttemptedExternal
 }
 
-// IsReadingSqlDataNotPermittedExternal returns true if the code equals "38004".
-func IsReadingSqlDataNotPermittedExternal(code string) bool {
-	return code == ReadingSqlDataNotPermittedExternal
+// IsReadingSQLDataNotPermittedExternal returns true if the code equals "38004".
+func IsReadingSQLDataNotPermittedExternal(code string) bool {
+	return code == ReadingSQLDataNotPermittedExternal
 }
 
 // IsExternalRoutineInvocationException returns true if the code equals "39000".
@@ -1015,9 +1015,9 @@ func IsFdwUnableToEstablishConnection(code string) bool {
 	return code == FdwUnableToEstablishConnection
 }
 
-// IsPlpgSqlError returns true if the code equals "P0000".
-func IsPlpgSqlError(code string) bool {
-	return code == PlpgSqlError
+// IsPlpgSQLError returns true if the code equals "P0000".
+func IsPlpgSQLError(code string) bool {
+	return code == PlpgSQLError
 }
 
 // IsRaiseException returns true if the code equals "P0001".

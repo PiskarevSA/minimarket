@@ -38,8 +38,8 @@ func NewLogin(value string) (Login, error) {
 	return Login(value), nil
 }
 
-func (o Login) String() string {
-	return string(o)
+func (l Login) String() string {
+	return string(l)
 }
 
 func (l Login) Equal(other Login) bool {

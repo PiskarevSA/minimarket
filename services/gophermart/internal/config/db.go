@@ -8,22 +8,22 @@ type DatabaseConfig struct {
 	Addr     string
 	User     string
 	Password string
-	Db       string
+	DB       string
 	SslMode  bool
 }
 
-func (c DatabaseConfig) ConnUrl() string {
-	connUrl := fmt.Sprintf(
+func (c DatabaseConfig) ConnURL() string {
+	connURL := fmt.Sprintf(
 		"postgres://%s:%s@%s/%s",
 		c.User,
 		c.Password,
 		c.Addr,
-		c.Db,
+		c.DB,
 	)
 
 	if c.SslMode {
-		connUrl += "?sslmode=disable"
+		connURL += "?sslmode=disable"
 	}
 
-	return connUrl
+	return connURL
 }

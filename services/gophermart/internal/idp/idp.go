@@ -11,35 +11,35 @@ type IdentityProvider struct {
 	issuer        string
 	signingMethod jwt.SigningMethod
 	signingKey    []byte
-	tokenTtl      time.Duration
+	tokenTTL      time.Duration
 }
 
 func NewIdentityProvider(
 	issuer string,
 	signingMethod jwt.SigningMethod,
 	signingKey []byte,
-	tokenTtl time.Duration,
+	tokenTTL time.Duration,
 ) *IdentityProvider {
 	return &IdentityProvider{
 		issuer:        issuer,
 		signingMethod: signingMethod,
 		signingKey:    signingKey,
-		tokenTtl:      tokenTtl,
+		tokenTTL:      tokenTTL,
 	}
 }
 
 func (i *IdentityProvider) IssueToken(
-	userId uuid.UUID,
+	userID uuid.UUID,
 	now time.Time,
 ) (tokenString string, err error) {
 	iat := now.UTC().Unix()
-	exp := now.Add(i.tokenTtl).Unix()
+	exp := now.Add(i.tokenTTL).Unix()
 
 	token := jwt.NewWithClaims(
 		i.signingMethod,
 		jwt.MapClaims{
 			"iss": i.issuer,
-			"sub": userId.String(),
+			"sub": userID.String(),
 			"iat": iat,
 			"exp": exp,
 		},

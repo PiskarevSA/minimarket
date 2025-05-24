@@ -52,18 +52,18 @@ func NewAmount(value any) (Amount, error) {
 	return Amount(dec), nil
 }
 
-func (o Amount) Decimal() decimal.Decimal {
-	return decimal.Decimal(o)
+func (a Amount) Decimal() decimal.Decimal {
+	return decimal.Decimal(a)
 }
 
-func (o Amount) Numeric() pgtype.Numeric {
-	dec := o.Decimal()
+func (a Amount) Numeric() pgtype.Numeric {
+	dec := a.Decimal()
 
 	return convtype.DecimalToNumeric(dec)
 }
 
-func (o Amount) String() string {
-	return o.Decimal().String()
+func (a Amount) String() string {
+	return a.Decimal().String()
 }
 
 func (a Amount) Equal(other Amount) bool {

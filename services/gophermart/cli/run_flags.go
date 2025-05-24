@@ -70,7 +70,7 @@ var runFlags = []cli.Flag{
 		Usage:       "База данных",
 		Value:       "postgres",
 		Sources:     cli.EnvVars("POSTGRES_DB"),
-		Destination: &config.Config.Database.Db,
+		Destination: &config.Config.Database.DB,
 	},
 
 	&cli.BoolFlag{
