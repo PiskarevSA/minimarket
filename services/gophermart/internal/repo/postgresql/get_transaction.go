@@ -14,17 +14,17 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) getTransactionsByUserId(
+func (r *PostgreSQL) getTransactionsByUserID(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 	operation objects.Operation,
 	offset,
 	limit int32,
 ) (txs []entities.Transaction, err error) {
-	rows, err := r.querier.GetTransactionsByUserId(
+	rows, err := r.querier.GetTransactionsByUserID(
 		ctx,
-		postgresql.GetTransactionsByUserIdParams{
-			UserId:    userId.UUID(),
+		postgresql.GetTransactionsByUserIDParams{
+			UserId:    userID.UUID(),
 			Operation: operation.String(),
 			Offset:    convtype.Int32ToInt4(offset),
 			Limit:     convtype.Int32ToInt4(limit),
@@ -38,35 +38,35 @@ func (r *PostgreSql) getTransactionsByUserId(
 		return entities.Nullransactions, err
 	}
 
-	txs = dto.GetTxsByUserIDToTxs(userId, rows)
+	txs = dto.GetTxsByUserIDToTxs(userID, rows)
 
 	return txs, nil
 }
 
-func (r *PostgreSql) GetDepositsByUserId(
+func (r *PostgreSQL) GetDepositsByUserID(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 	offset,
 	limit int32,
 ) (txs []entities.Transaction, err error) {
-	return r.getTransactionsByUserId(
+	return r.getTransactionsByUserID(
 		ctx,
-		userId,
+		userID,
 		objects.OperationDeposit,
 		offset,
 		limit,
 	)
 }
 
-func (r *PostgreSql) GetWithdrawalsByUserId(
+func (r *PostgreSQL) GetWithdrawalsByUserID(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 	offset,
 	limit int32,
 ) (txs []entities.Transaction, err error) {
-	return r.getTransactionsByUserId(
+	return r.getTransactionsByUserID(
 		ctx,
-		userId,
+		userID,
 		objects.OperationWithdraw,
 		offset,
 		limit,

@@ -7,7 +7,7 @@ SELECT
 FROM orders
 WHERE number = @number;
 
--- name: GetOrdersByUserId :many
+-- name: GetOrdersByUserID :many
 SELECT 
     number, 
     status, 

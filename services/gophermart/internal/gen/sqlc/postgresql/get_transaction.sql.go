@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getTransactionsByUserId = `-- name: GetTransactionsByUserId :many
+const getTransactionsByUserID = `-- name: GetTransactionsByUserID :many
 SELECT
     id,
     order_number,
@@ -26,22 +26,22 @@ OFFSET $3::INTEGER
 LIMIT $4::INTEGER
 `
 
-type GetTransactionsByUserIdParams struct {
+type GetTransactionsByUserIDParams struct {
 	UserId    uuid.UUID
 	Operation string
 	Offset    pgtype.Int4
 	Limit     pgtype.Int4
 }
 
-type GetTransactionsByUserIdRow struct {
+type GetTransactionsByUserIDRow struct {
 	Id          int32
 	OrderNumber string
 	Sum         pgtype.Numeric
 	ProcessedAt time.Time
 }
 
-func (q *Queries) GetTransactionsByUserId(ctx context.Context, arg GetTransactionsByUserIdParams) ([]GetTransactionsByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, getTransactionsByUserId,
+func (q *Queries) GetTransactionsByUserID(ctx context.Context, arg GetTransactionsByUserIDParams) ([]GetTransactionsByUserIDRow, error) {
+	rows, err := q.db.Query(ctx, getTransactionsByUserID,
 		arg.UserId,
 		arg.Operation,
 		arg.Offset,
@@ -51,9 +51,9 @@ func (q *Queries) GetTransactionsByUserId(ctx context.Context, arg GetTransactio
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetTransactionsByUserIdRow
+	var items []GetTransactionsByUserIDRow
 	for rows.Next() {
-		var i GetTransactionsByUserIdRow
+		var i GetTransactionsByUserIDRow
 		if err := rows.Scan(
 			&i.Id,
 			&i.OrderNumber,

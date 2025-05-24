@@ -30,12 +30,12 @@ func NewUploadOrderNumber(storage UploadOrderNumberStorage) *UploadOrderNumber {
 
 func (u *UploadOrderNumber) Do(
 	ctx context.Context,
-	rawUserId uuid.UUID,
+	rawUserID uuid.UUID,
 	rawOrderNumber string,
 ) error {
 	const op = "uploadOrderNumber"
 
-	userID, orderNumber, err := u.parseInputs(rawUserId, rawOrderNumber)
+	userID, orderNumber, err := u.parseInputs(rawUserID, rawOrderNumber)
 	if err != nil {
 		return err
 	}
@@ -47,14 +47,14 @@ func (u *UploadOrderNumber) Do(
 }
 
 func (u *UploadOrderNumber) parseInputs(
-	rawUserId uuid.UUID,
+	rawUserID uuid.UUID,
 	rawOrderNumber string,
 ) (
-	userId objects.UserID,
+	userID objects.UserID,
 	orderNumber objects.OrderNumber,
 	err error,
 ) {
-	userId = objects.NewUserID(rawUserId)
+	userID = objects.NewUserID(rawUserID)
 
 	orderNumber, err = objects.NewOrderNumber(rawOrderNumber)
 	if err != nil {
@@ -67,18 +67,18 @@ func (u *UploadOrderNumber) parseInputs(
 		return objects.NullUserID, objects.NullOrderNumber, err
 	}
 
-	return userId, orderNumber, nil
+	return userID, orderNumber, nil
 }
 
 func (u *UploadOrderNumber) newOrder(
-	userId objects.UserID,
+	userID objects.UserID,
 	orderNumber objects.OrderNumber,
 	uploadedAt time.Time,
 ) entities.Order {
 	var order entities.Order
 
 	order.SetNumber(orderNumber)
-	order.SetUserID(userId)
+	order.SetUserID(userID)
 
 	order.SetStatus(objects.OrderStatusNew)
 	order.SetUploadedAt(uploadedAt)

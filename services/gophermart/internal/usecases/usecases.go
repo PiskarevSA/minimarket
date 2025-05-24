@@ -14,7 +14,7 @@ import (
 type (
 	IdentityProvider interface {
 		IssueToken(
-			userId uuid.UUID,
+			userID uuid.UUID,
 			now time.Time,
 		) (tokenString string, err error)
 	}
@@ -37,7 +37,7 @@ type (
 	BalanceStorage interface {
 		CreateOrUpdateBalanceInTx(
 			ctx context.Context,
-			userId objects.UserID,
+			userID objects.UserID,
 			operation objects.Operation,
 			sum objects.Amount,
 		) error

@@ -12,11 +12,11 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) GetAccountByUserId(
+func (r *PostgreSQL) GetAccountByUserID(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 ) (account entities.Account, err error) {
-	row, err := r.querier.GetAccountByUserId(ctx, userId.UUID())
+	row, err := r.querier.GetAccountByUserID(ctx, userID.UUID())
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = repo.ErrLoginNotExists
@@ -25,12 +25,12 @@ func (r *PostgreSql) GetAccountByUserId(
 		return entities.NullAccount, err
 	}
 
-	account = dto.GetAccountByUserIDToAccount(userId, row)
+	account = dto.GetAccountByUserIDToAccount(userID, row)
 
 	return account, err
 }
 
-func (r *PostgreSql) GetAccountByLogin(
+func (r *PostgreSQL) GetAccountByLogin(
 	ctx context.Context,
 	login objects.Login,
 ) (account entities.Account, err error) {

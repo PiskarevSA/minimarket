@@ -41,7 +41,7 @@ func (q *Queries) GetAccountByLogin(ctx context.Context, login string) (GetAccou
 	return i, err
 }
 
-const getAccountByUserId = `-- name: GetAccountByUserId :one
+const getAccountByUserID = `-- name: GetAccountByUserID :one
 SELECT 
     login, 
     password_hash, 
@@ -51,16 +51,16 @@ FROM accounts
 WHERE id = $1
 `
 
-type GetAccountByUserIdRow struct {
+type GetAccountByUserIDRow struct {
 	Login        string
 	PasswordHash string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
 
-func (q *Queries) GetAccountByUserId(ctx context.Context, id uuid.UUID) (GetAccountByUserIdRow, error) {
-	row := q.db.QueryRow(ctx, getAccountByUserId, id)
-	var i GetAccountByUserIdRow
+func (q *Queries) GetAccountByUserID(ctx context.Context, id uuid.UUID) (GetAccountByUserIDRow, error) {
+	row := q.db.QueryRow(ctx, getAccountByUserID, id)
+	var i GetAccountByUserIDRow
 	err := row.Scan(
 		&i.Login,
 		&i.PasswordHash,

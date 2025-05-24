@@ -8,7 +8,7 @@ import (
 
 func GetAccountByUserIDToAccount(
 	userID objects.UserID,
-	row postgresql.GetAccountByUserIdRow,
+	row postgresql.GetAccountByUserIDRow,
 ) entities.Account {
 	var account entities.Account
 

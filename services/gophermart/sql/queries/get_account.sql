@@ -1,4 +1,4 @@
--- name: GetAccountByUserId :one
+-- name: GetAccountByUserID :one
 SELECT 
     login, 
     password_hash, 

@@ -9,7 +9,7 @@ import (
 
 func GetTxsByUserIDToTxs(
 	userID objects.UserID,
-	rows []postgresql.GetTransactionsByUserIdRow,
+	rows []postgresql.GetTransactionsByUserIDRow,
 ) []entities.Transaction {
 	txs := make([]entities.Transaction, len(rows))
 

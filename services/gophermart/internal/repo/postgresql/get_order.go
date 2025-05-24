@@ -14,23 +14,23 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) GetOrderByNumber(
+func (r *PostgreSQL) GetOrderByNumber(
 	ctx context.Context,
 	number objects.OrderNumber,
 ) (order entities.Order, err error) {
 	return order, err
 }
 
-func (r *PostgreSql) GetOrdersByUserId(
+func (r *PostgreSQL) GetOrdersByUserID(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 	offset,
 	limit int32,
 ) (orders []entities.Order, err error) {
-	rows, err := r.querier.GetOrdersByUserId(
+	rows, err := r.querier.GetOrdersByUserID(
 		ctx,
-		postgresql.GetOrdersByUserIdParams{
-			UserId: userId.UUID(),
+		postgresql.GetOrdersByUserIDParams{
+			UserId: userID.UUID(),
 			Offset: convtype.Int32ToInt4(offset),
 			Limit:  convtype.Int32ToInt4(limit),
 		},
@@ -43,7 +43,7 @@ func (r *PostgreSql) GetOrdersByUserId(
 		return entities.NullOrders, err
 	}
 
-	orders = dto.GetOrdersByUserIDToOrders(userId, rows)
+	orders = dto.GetOrdersByUserIDToOrders(userID, rows)
 
 	return orders, err
 }

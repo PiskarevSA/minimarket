@@ -10,7 +10,7 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) createOrder(
+func (r *PostgreSQL) createOrder(
 	ctx context.Context,
 	querier *postgresql.Queries,
 	order entities.Order,
@@ -41,14 +41,14 @@ func (r *PostgreSql) createOrder(
 	return nil
 }
 
-func (r *PostgreSql) CreateOrder(
+func (r *PostgreSQL) CreateOrder(
 	ctx context.Context,
 	order entities.Order,
 ) error {
 	return r.createOrder(ctx, r.querier, order)
 }
 
-func (r *PostgreSql) CreateOrderInTx(
+func (r *PostgreSQL) CreateOrderInTx(
 	ctx context.Context,
 	order entities.Order,
 ) error {

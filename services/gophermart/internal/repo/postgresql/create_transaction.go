@@ -13,7 +13,7 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) createTransaction(
+func (r *PostgreSQL) createTransaction(
 	ctx context.Context,
 	querier *postgresql.Queries,
 	tx entities.Transaction,
@@ -42,14 +42,14 @@ func (r *PostgreSql) createTransaction(
 	return nil
 }
 
-func (r *PostgreSql) CreateTransaction(
+func (r *PostgreSQL) CreateTransaction(
 	ctx context.Context,
 	tx entities.Transaction,
 ) error {
 	return r.createTransaction(ctx, r.querier, tx)
 }
 
-func (r *PostgreSql) CreateTransactionInTx(
+func (r *PostgreSQL) CreateTransactionInTx(
 	ctx context.Context,
 	tx entities.Transaction,
 ) error {

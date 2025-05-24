@@ -1,4 +1,4 @@
--- name: GetBalanceByUserId :one
+-- name: GetBalanceByUserID :one
 SELECT
     current,
     withdrawn

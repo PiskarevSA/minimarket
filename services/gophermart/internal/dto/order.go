@@ -9,7 +9,7 @@ import (
 
 func GetOrdersByUserIDToOrders(
 	userID objects.UserID,
-	rows []postgresql.GetOrdersByUserIdRow,
+	rows []postgresql.GetOrdersByUserIDRow,
 ) []entities.Order {
 	orders := make([]entities.Order, len(rows))
 

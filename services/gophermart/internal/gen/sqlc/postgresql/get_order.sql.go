@@ -42,7 +42,7 @@ func (q *Queries) GetOrderByNumber(ctx context.Context, number string) (GetOrder
 	return i, err
 }
 
-const getOrdersByUserId = `-- name: GetOrdersByUserId :many
+const getOrdersByUserID = `-- name: GetOrdersByUserID :many
 SELECT 
     number, 
     status, 
@@ -55,28 +55,28 @@ OFFSET $2::INTEGER
 LIMIT $3::INTEGER
 `
 
-type GetOrdersByUserIdParams struct {
+type GetOrdersByUserIDParams struct {
 	UserId uuid.UUID
 	Offset pgtype.Int4
 	Limit  pgtype.Int4
 }
 
-type GetOrdersByUserIdRow struct {
+type GetOrdersByUserIDRow struct {
 	Number     string
 	Status     string
 	Accrual    pgtype.Numeric
 	UploadedAt time.Time
 }
 
-func (q *Queries) GetOrdersByUserId(ctx context.Context, arg GetOrdersByUserIdParams) ([]GetOrdersByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, getOrdersByUserId, arg.UserId, arg.Offset, arg.Limit)
+func (q *Queries) GetOrdersByUserID(ctx context.Context, arg GetOrdersByUserIDParams) ([]GetOrdersByUserIDRow, error) {
+	rows, err := q.db.Query(ctx, getOrdersByUserID, arg.UserId, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetOrdersByUserIdRow
+	var items []GetOrdersByUserIDRow
 	for rows.Next() {
-		var i GetOrdersByUserIdRow
+		var i GetOrdersByUserIDRow
 		if err := rows.Scan(
 			&i.Number,
 			&i.Status,

@@ -33,13 +33,13 @@ func NewWithdraw(storage WithdrawRepo, transactor Transactor) *Withdraw {
 
 func (u *Withdraw) Do(
 	ctx context.Context,
-	rawUserId uuid.UUID,
+	rawUserID uuid.UUID,
 	rawOrderNumber,
 	rawSum string,
 ) error {
 	const op = "withdraw"
 
-	userID := objects.NewUserID(rawUserId)
+	userID := objects.NewUserID(rawUserID)
 
 	orderNumber, sum, err := u.parseInputs(rawOrderNumber, rawSum)
 	if err != nil {
@@ -87,14 +87,14 @@ func (u *Withdraw) parseInputs(
 
 func (u *Withdraw) newTransaction(
 	orderNumber objects.OrderNumber,
-	userId objects.UserID,
+	userID objects.UserID,
 	sum objects.Amount,
 	pocessedAt time.Time,
 ) entities.Transaction {
 	var tx entities.Transaction
 
 	tx.SetOrderNumber(orderNumber)
-	tx.SetUserID(userId)
+	tx.SetUserID(userID)
 
 	tx.SetSum(sum)
 	tx.SetOperation(objects.OperationWithdraw)

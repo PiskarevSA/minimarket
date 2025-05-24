@@ -13,7 +13,7 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) createAccount(
+func (r *PostgreSQL) createAccount(
 	ctx context.Context,
 	querier *postgresql.Queries,
 	account entities.Account,
@@ -42,14 +42,14 @@ func (r *PostgreSql) createAccount(
 	return nil
 }
 
-func (r *PostgreSql) CreateAccount(
+func (r *PostgreSQL) CreateAccount(
 	ctx context.Context,
 	account entities.Account,
 ) error {
 	return r.createAccount(ctx, r.querier, account)
 }
 
-func (r *PostgreSql) CreateAccountInTx(
+func (r *PostgreSQL) CreateAccountInTx(
 	ctx context.Context,
 	account entities.Account,
 ) error {

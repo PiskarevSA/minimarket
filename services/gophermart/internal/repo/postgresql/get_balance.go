@@ -11,13 +11,13 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r *PostgreSql) GetBalanceByUserId(
+func (r *PostgreSQL) GetBalanceByUserID(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 ) (current, withdrawn objects.Amount, err error) {
-	userUUID := userId.UUID()
+	userUUID := userID.UUID()
 
-	row, err := r.querier.GetBalanceByUserId(ctx, userUUID)
+	row, err := r.querier.GetBalanceByUserID(ctx, userUUID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = repo.ErrNoBalanceFound

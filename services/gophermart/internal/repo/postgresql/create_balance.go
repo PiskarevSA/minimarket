@@ -13,17 +13,17 @@ import (
 	"github.com/github.com/PiskarevSA/minimarket/services/gophermart/internal/repo"
 )
 
-func (r PostgreSql) createOrUpdateBalance(
+func (r PostgreSQL) createOrUpdateBalance(
 	ctx context.Context,
 	querier *postgresql.Queries,
-	userId objects.UserID,
+	userID objects.UserID,
 	operation objects.Operation,
 	sum objects.Amount,
 ) error {
 	err := querier.CreateOrUpdateBalance(
 		ctx,
 		postgresql.CreateOrUpdateBalanceParams{
-			UserId:    userId.UUID(),
+			UserId:    userID.UUID(),
 			Operation: operation.String(),
 			Sum:       sum.Numeric(),
 		},
@@ -42,23 +42,23 @@ func (r PostgreSql) createOrUpdateBalance(
 	return nil
 }
 
-func (r *PostgreSql) CreateOrUpdateBalance(
+func (r *PostgreSQL) CreateOrUpdateBalance(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 	operation objects.Operation,
 	sum objects.Amount,
 ) error {
-	return r.createOrUpdateBalance(ctx, r.querier, userId, operation, sum)
+	return r.createOrUpdateBalance(ctx, r.querier, userID, operation, sum)
 }
 
-func (r *PostgreSql) CreateOrUpdateBalanceInTx(
+func (r *PostgreSQL) CreateOrUpdateBalanceInTx(
 	ctx context.Context,
-	userId objects.UserID,
+	userID objects.UserID,
 	operation objects.Operation,
 	sum objects.Amount,
 ) error {
 	pgxTx := transactor.TxCtxKey.Value(ctx)
 	querier := r.querier.WithTx(pgxTx)
 
-	return r.createOrUpdateBalance(ctx, querier, userId, operation, sum)
+	return r.createOrUpdateBalance(ctx, querier, userID, operation, sum)
 }

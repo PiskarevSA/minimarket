@@ -1,4 +1,4 @@
--- name: GetTransactionsByUserId :many
+-- name: GetTransactionsByUserID :many
 SELECT
     id,
     order_number,

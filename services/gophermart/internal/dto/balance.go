@@ -7,7 +7,7 @@ import (
 )
 
 func GetBalanceByUserIDToBalance(
-	row postgresql.GetBalanceByUserIdRow,
+	row postgresql.GetBalanceByUserIDRow,
 ) (current, withdrawn objects.Amount) {
 	dec, _ := convtype.NumericToDecimal(row.Current)
 	current = objects.Amount(dec)

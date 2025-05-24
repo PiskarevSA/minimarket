@@ -12,7 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getBalanceByUserId = `-- name: GetBalanceByUserId :one
+const getBalanceByUserID = `-- name: GetBalanceByUserID :one
 SELECT
     current,
     withdrawn
@@ -20,14 +20,14 @@ FROM balances
 WHERE user_id = $1
 `
 
-type GetBalanceByUserIdRow struct {
+type GetBalanceByUserIDRow struct {
 	Current   pgtype.Numeric
 	Withdrawn pgtype.Numeric
 }
 
-func (q *Queries) GetBalanceByUserId(ctx context.Context, userID uuid.UUID) (GetBalanceByUserIdRow, error) {
-	row := q.db.QueryRow(ctx, getBalanceByUserId, userID)
-	var i GetBalanceByUserIdRow
+func (q *Queries) GetBalanceByUserID(ctx context.Context, userID uuid.UUID) (GetBalanceByUserIDRow, error) {
+	row := q.db.QueryRow(ctx, getBalanceByUserID, userID)
+	var i GetBalanceByUserIDRow
 	err := row.Scan(&i.Current, &i.Withdrawn)
 	return i, err
 }
