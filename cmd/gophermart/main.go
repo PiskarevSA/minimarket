@@ -9,7 +9,6 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/urfave/cli/v3"
 
 	appcli "github.com/github.com/PiskarevSA/minimarket/services/gophermart/cli"
 )
@@ -33,14 +32,7 @@ func main() {
 	)
 	defer stop()
 
-	rootCli := cli.Command{
-		Name:     "minimarket",
-		Version:  "1.0.0",
-		Commands: []*cli.Command{appcli.Run},
-	}
-
-	err := rootCli.Run(stopCtx, os.Args)
-
+	err := appcli.Run.Run(stopCtx, os.Args)
 	if err != nil {
 		log.Fatal().
 			Err(err).

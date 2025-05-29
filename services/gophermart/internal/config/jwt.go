@@ -1,7 +1,8 @@
 package config
 
 type JwtConfig struct {
-	SecretKey string
+	SecretKey     string
+	SigningMethod string
 }
 
 func (c JwtConfig) SigningKey() []byte {

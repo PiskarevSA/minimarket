@@ -5,6 +5,7 @@ import (
 )
 
 type DatabaseConfig struct {
+	URI      string
 	Addr     string
 	User     string
 	Password string
@@ -13,6 +14,10 @@ type DatabaseConfig struct {
 }
 
 func (c DatabaseConfig) ConnURL() string {
+	if len(c.URI) > 0 {
+		return c.URI
+	}
+
 	connURL := fmt.Sprintf(
 		"postgres://%s:%s@%s/%s",
 		c.User,

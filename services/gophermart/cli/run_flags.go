@@ -15,6 +15,7 @@ var runFlags = []cli.Flag{
 		Value:       "127.0.0.1:8616",
 		Sources:     cli.EnvVars("SERVER_ADDR"),
 		Destination: &config.Config.Server.Addr,
+		Aliases:     []string{"a"},
 	},
 
 	&cli.DurationFlag{
@@ -39,6 +40,15 @@ var runFlags = []cli.Flag{
 		Value:       120 * time.Second,
 		Sources:     cli.EnvVars("SERVER_IDLE_TIMEOUT"),
 		Destination: &config.Config.Server.IdleTimeout,
+	},
+
+	&cli.StringFlag{
+		Name:        "postgres.uri",
+		Usage:       "Унифицированный идентификатор PostgreSQL (вместо отдельных настроек)",
+		Value:       "",
+		Sources:     cli.EnvVars("DATABASE_URI"),
+		Destination: &config.Config.Database.URI,
+		Aliases:     []string{"d"},
 	},
 
 	&cli.StringFlag{
@@ -82,10 +92,27 @@ var runFlags = []cli.Flag{
 	},
 
 	&cli.StringFlag{
-		Name:        "jwt.secret-key",
-		Usage:       "Ключ для подписи",
-		Required:    true,
+		Name:        "jwt.signkeyfilepath",
+		Usage:       "Путь к файлу с ключом для подписи по указанному алгоритму",
+		Value:       "jwt.pem",
 		Sources:     cli.EnvVars("JWT_SECRET_KEY_PATH"),
 		Destination: &config.Config.Jwt.SecretKey,
+	},
+
+	&cli.StringFlag{
+		Name:        "jwt.signing-method",
+		Usage:       "Алгоритм подписи",
+		Value:       "ES256",
+		Sources:     cli.EnvVars("JWT_SIGNING_METHOD"),
+		Destination: &config.Config.Jwt.SigningMethod,
+	},
+
+	&cli.StringFlag{
+		Name:        "accrual.addr",
+		Usage:       "Адрес системы расчёта начислений",
+		Value:       "127.0.0.1:8617",
+		Sources:     cli.EnvVars("ACCRUAL_SYSTEM_ADDRESS"),
+		Destination: &config.Config.Accrual.Addr,
+		Aliases:     []string{"r"},
 	},
 }
