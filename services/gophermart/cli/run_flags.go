@@ -13,7 +13,7 @@ var runFlags = []cli.Flag{
 		Name:        "server.addr",
 		Usage:       "Адрес HTTP сервера",
 		Value:       "127.0.0.1:8616",
-		Sources:     cli.EnvVars("SERVER_ADDR"),
+		Sources:     cli.EnvVars("RUN_ADDRESS"),
 		Destination: &config.Config.Server.Addr,
 		Aliases:     []string{"a"},
 	},
