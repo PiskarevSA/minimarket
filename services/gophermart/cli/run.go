@@ -9,6 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddlewares "github.com/go-chi/chi/v5/middleware"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v3"
@@ -31,6 +34,22 @@ var Run = &cli.Command{
 		const serviceName = "auth"
 
 		connURL := config.Config.Database.ConnURL()
+
+		m, err := migrate.New(
+			"file://../../services/gophermart/sql/migrations",
+			connURL)
+		if err != nil {
+			log.Fatal().
+				Err(err).
+				Msg("failed to create migrate tool")
+		}
+		err = m.Up()
+		if err != nil {
+			log.Fatal().
+				Err(err).
+				Msg("failed to apply migrations")
+		}
+
 		pgxPool, err := pgxpool.New(ctx, connURL)
 		if err != nil {
 			log.Fatal().

@@ -33,17 +33,6 @@ type Order struct {
 	UploadedAt time.Time
 }
 
-type Outbox struct {
-	Id        int64
-	Eventname string
-	Status    string
-	Payload   []byte
-	CreatedAt time.Time
-	CreatedBy string
-	UpdatedAt time.Time
-	UpdatedBy string
-}
-
 type Transaction struct {
 	Id          int32
 	UserId      uuid.UUID

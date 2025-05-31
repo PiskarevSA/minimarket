@@ -9,13 +9,6 @@ CREATE TABLE IF NOT EXISTS transactions (
     PRIMARY KEY(id, order_number, processed_at)
 );
 
-SELECT create_hypertable(
-    'transactions',
-    'processed_at',
-    chunk_time_interval => INTERVAL '6 days',
-    if_not_exists => TRUE
-);
-
 CREATE TABLE IF NOT EXISTS transaction_counter (
     user_id UUID PRIMARY KEY,
     counter INTEGER NOT NULL
