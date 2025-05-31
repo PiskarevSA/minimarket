@@ -44,7 +44,7 @@ var Run = &cli.Command{
 				Msg("failed to create migrate tool")
 		}
 		err = m.Up()
-		if err != nil {
+		if err != nil && err != migrate.ErrNoChange {
 			log.Fatal().
 				Err(err).
 				Msg("failed to apply migrations")

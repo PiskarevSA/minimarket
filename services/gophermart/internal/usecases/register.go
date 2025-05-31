@@ -45,7 +45,10 @@ func (u *Register) Do(
 	}
 
 	now := time.Now()
-	passwordHash := password.Hash()
+	passwordHash, err := password.Hash()
+	if err != nil {
+		return "", err
+	}
 
 	account := u.newAccount(login, passwordHash, now)
 	rawUserID := account.ID().UUID()

@@ -16,7 +16,7 @@ func (e *PasswordError) Error() string {
 
 const (
 	MixPasswordLen = 12
-	MaxPasswordLen = 24
+	MaxPasswordLen = 32
 )
 
 var (
@@ -48,10 +48,8 @@ func (o Password) String() string {
 	return string(o)
 }
 
-func (o Password) Hash() []byte {
-	hash, _ := bcrypt.GenerateFromPassword(o, bcrypt.DefaultCost)
-
-	return hash
+func (o Password) Hash() ([]byte, error) {
+	return bcrypt.GenerateFromPassword(o, bcrypt.DefaultCost)
 }
 
 func (o Password) IsHashMatch(hash []byte) (bool, error) {
