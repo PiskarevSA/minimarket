@@ -35,12 +35,21 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
             apt-get install -y nodejs
 
-      - name: Download autotests binaries
+      - name: Download autotests binaries 1
         uses: robinraju/release-downloader@v1.8
         with:
           repository: Yandex-Practicum/go-autotests
           latest: true
-          fileName: "*"
+          fileName: gophermarttest
+          out-file-path: .tools
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download autotests binaries 2
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: Yandex-Practicum/go-autotests
+          latest: true
+          fileName: random
           out-file-path: .tools
           token: ${{ secrets.GITHUB_TOKEN }}
 

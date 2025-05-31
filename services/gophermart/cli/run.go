@@ -36,7 +36,7 @@ var Run = &cli.Command{
 		connURL := config.Config.Database.ConnURL()
 
 		m, err := migrate.New(
-			"file://../../services/gophermart/sql/migrations",
+			"file://services/gophermart/sql/migrations",
 			connURL)
 		if err != nil {
 			log.Fatal().
