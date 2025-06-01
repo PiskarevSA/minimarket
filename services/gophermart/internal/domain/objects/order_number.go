@@ -13,21 +13,14 @@ func (e OrderNumberError) Error() string {
 var NullOrderNumber OrderNumber = ""
 
 var (
-	EmptyOrderNumber         = &OrderNumberError{"empty order number"}
-	ErrInvalidOrderNumber    = &OrderNumberError{"invalid order number"}
-	ErrInvalidOrderNumberLen = &OrderNumberError{"invalid order number len"}
+	EmptyOrderNumber      = &OrderNumberError{"empty order number"}
+	ErrInvalidOrderNumber = &OrderNumberError{"invalid order number"}
 )
-
-const OrderNubmerLen = 12
 
 func NewOrderNumber(value string) (OrderNumber, error) {
 	orderNumberLen := len(value)
 	if orderNumberLen == 0 {
 		return NullOrderNumber, EmptyOrderNumber
-	}
-
-	if orderNumberLen != OrderNubmerLen {
-		return NullOrderNumber, ErrInvalidOrderNumberLen
 	}
 
 	ok, err := damm.Verify(value)
