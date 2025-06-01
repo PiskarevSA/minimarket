@@ -1,0 +1,38 @@
+operationId: login
+description: Вход пользователя в систему
+tags:
+  - Auth
+requestBody:
+  description: Данные для входа
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: ../objects/LoginRequest.yaml
+responses:
+  "200":
+    description: Регистрация выполнена
+    headers:
+      Authorization:
+        description: JWT для авторизации
+        schema:
+          type: string
+          example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  "400":
+    description: Предоставлены данные неправильного формата
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/ValidationError.yaml
+  "401":
+    description: Нарушены бизнес-правила - неправильный логин или пароль
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/DomainError.yaml
+  "500":
+    description: Внутренняя ошибка сервера
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/InternalServerError.yaml

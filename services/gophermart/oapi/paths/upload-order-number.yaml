@@ -1,0 +1,45 @@
+operationId: uploadOrderNumber
+description: Загрузка номера заказа
+tags:
+  - Orders
+security:
+  - bearerAuth: []
+  - cookieAuth: []
+requestBody:
+  description: Данные для регистрации
+  required: true
+  content:
+    application/json:
+      schema:
+        description: Номер заказа за который были списаны бонусы
+        example: "2377225624"
+        type: string
+        minLength: 12
+        maxLength: 12
+responses:
+  "200":
+    description: Номер заказа уже был загружен пользователем
+  "202":
+    description: Новый номер заказа принят в обработку
+  "400":
+    description: Предоставлены данные неправильного формата
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/ValidationError.yaml
+  "401":
+    description: Пользователь не аутентифицирован
+  "409":
+    description: Номер заказа уже был загружен другим пользователем
+  "422":
+    description: Неверный формат номера заказа
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/ValidationError.yaml
+  "500":
+    description: Внутренняя ошибка сервера
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/InternalServerError.yaml

@@ -1,0 +1,47 @@
+operationId: getWithdrawals
+description: Получение операций по списанию бонусов
+tags:
+  - Balance
+security:
+  - bearerAuth: []
+  - cookieAuth: []
+parameters:
+  - name: offset
+    in: query
+    description: Смещение, от которого начинается выборка записей
+    required: false
+    schema:
+      type: integer
+      minimum: 0
+      default: 0
+      example: 0
+      x-go-type: int32
+  - name: limit
+    in: query
+    description: Максимальное число операций списания бонусов в ответе
+    required: false
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 35
+      default: 10
+      example: 20
+      x-go-type: int32
+responses:
+  "200":
+    description: Операции списания получены
+    content:
+      application/json:
+        schema:
+          $ref: ../objects/GetWithdrawalsResponse.yaml
+  "204":
+    description: Списания не найдены
+  "401":
+    description: Пользователь не аутентифицирован
+  "500":
+    description: Внутренняя ошибка сервера
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/InternalServerError.yaml
+    

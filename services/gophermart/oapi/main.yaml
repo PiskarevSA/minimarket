@@ -1,0 +1,38 @@
+openapi: 3.0.0
+info:
+  title: API Gophermart
+  version: 1.0.0
+  description: " "
+  contact:
+    name: ООО "Минимаркет"
+    email: minimarket@admin.com
+    url: https://github.com/PiskarevSA/minimarket-auth
+servers:
+  - url: https://127.0.0.1:8616
+    description: Локальный сервер для тестов
+tags:
+  - name: Auth
+  - name: Balance
+  - name: Orders
+
+paths:
+  /api/user/register:
+    post:
+      $ref: paths/register.yaml
+  /api/user/login:
+    post:
+      $ref: paths/login.yaml
+  /api/user/orders:
+    get:
+      $ref: paths/get-orders.yaml
+    post:
+      $ref: paths/upload-order-number.yaml
+  /api/user/balance:
+    get:
+      $ref: paths/get-balance.yaml
+  /api/user/balance/withdraw:
+    post:
+      $ref: paths/withdraw.yaml
+  /api/user/withdrawals:
+    get:
+      $ref: paths/get-withdrawals.yaml

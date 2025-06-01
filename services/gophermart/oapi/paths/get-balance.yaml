@@ -1,0 +1,22 @@
+operationId: getBalance
+description: Получение баланса
+tags:
+  - Balance
+security:
+  - bearerAuth: []
+  - cookieAuth: []
+responses:
+  "200":
+    description: Баланс получен
+    content:
+      application/json:
+        schema:
+          $ref: ../objects/GetBalanceResponse.yaml
+  "401":
+    description: Пользователь не аутентифицирован
+  "500":
+    description: Внутренняя ошибка сервера
+    content:
+      application/json:
+        schema:
+          $ref: ../errors/InternalServerError.yaml

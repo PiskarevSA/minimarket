@@ -1,0 +1,20 @@
+type: object
+properties:
+  code:
+    description: Уникальный код доменной ошибки
+    example: D1002
+    type: string
+    enum:
+      - D1002 # login already in use
+      - D1126 # invalid login or password
+      - D1215 # insufficient balance
+      - D1426 # order already created by other user
+      - D1531 # order already created by user
+  message:
+    description: Человеко‑читаемое сообщение об ошибке
+    example: login already in use
+    type: string
+required:
+  - code
+  - message
+x-go-name: DomainErrorResponse
