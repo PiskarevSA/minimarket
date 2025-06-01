@@ -1,6 +1,10 @@
 package objects
 
-import "github.com/github.com/PiskarevSA/minimarket/pkg/damm"
+import (
+	"strconv"
+
+	"github.com/github.com/PiskarevSA/minimarket/pkg/luhn"
+)
 
 type OrderNumber string
 
@@ -23,10 +27,12 @@ func NewOrderNumber(value string) (OrderNumber, error) {
 		return NullOrderNumber, EmptyOrderNumber
 	}
 
-	ok, err := damm.Verify(value)
+	orderNumber, err := strconv.Atoi(value)
 	if err != nil {
 		return NullOrderNumber, ErrInvalidOrderNumber
 	}
+
+	ok := luhn.IsValid(orderNumber)
 
 	if !ok {
 		return NullOrderNumber, ErrInvalidOrderNumber

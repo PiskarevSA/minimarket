@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"errors"
+	"io"
 	"net/http"
 
-	json "github.com/bytedance/sonic"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
@@ -51,22 +51,14 @@ func (h *UploadOrderNumber) handle(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	dec := json.ConfigDefault.NewDecoder(req.Body)
-
-	var orderNumber string
-
-	err := dec.Decode(&orderNumber)
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		writeValidationError(
-			rw,
-			http.StatusBadRequest,
-			"V1042",
-			"body",
-			"invalid json format",
-		)
+		writeInternalServerError(rw)
 
 		return
 	}
+
+	orderNumber := string(body)
 
 	err = h.usecase.Do(ctx, userID, orderNumber)
 	if err != nil {
